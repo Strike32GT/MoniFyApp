@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:monify_app_mobile/screens/perfil.dart';
 
 class Home extends StatefulWidget{
   const Home([Key? key]) : super(key: key);
@@ -16,7 +17,7 @@ class _HomeState extends State<Home> {
     const Center(child: Text('Estadistica', style: TextStyle(fontSize: 24))),
     const Center(child: Text('Agregar', style: TextStyle(fontSize: 24))),
     const Center(child: Text('Historial', style: TextStyle(fontSize: 24))),
-    const Center(child: Text('Perfil', style: TextStyle(fontSize: 24))),
+    const ProfilePage(),
   ];
 
 
