@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:monify_app_mobile/screens/Estadistic.dart';
 import 'package:monify_app_mobile/screens/historial.dart';
 import 'package:monify_app_mobile/screens/perfil.dart';
 
@@ -15,7 +16,7 @@ class _HomeState extends State<Home> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const Center(child: Text('Estadistica', style: TextStyle(fontSize: 24))),
+    const EstadisticPage(),
     const Center(child: Text('Agregar', style: TextStyle(fontSize: 24))),
     const HistoryPage(),
     const ProfilePage(),
