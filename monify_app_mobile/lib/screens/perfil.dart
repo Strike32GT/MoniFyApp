@@ -16,6 +16,7 @@ class ProfilePage extends StatelessWidget {
                         _buildUserProfileCard(),
                         _buildCurrentStreakCard(),
                         _buildWeeklyProgress(),
+                        _buildAchievementsSection(),
                     ],
                 ),
             ),
@@ -343,4 +344,105 @@ class ProfilePage extends StatelessWidget {
         );
     }
 
+
+    Widget _buildAchievementsSection() {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Logros',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildAchievementCard(
+              icon : Icons.start,
+              iconColor: Colors.amber,
+              title : "Primer Ahorro",
+              description: 'Has realizado tu primer control',
+              isCompleted: true
+            ),
+            _buildAchievementCard(
+              icon: Icons.attach_money,
+              iconColor: Colors.green,
+              title: 'Ahorrador Constante',
+              description: 'Mantén tu presupuesto por 7 días seguidos.',
+              isCompleted: false,
+            ),
+            _buildAchievementCard(
+              icon: Icons.trending_up,
+              iconColor: Colors.blue,
+              title: 'Crecimiento Financiero',
+              description: 'Aumenta tus ahorros en un 10% en un mes',
+              isCompleted: false,
+            ),
+            _buildAchievementCard(
+              icon: Icons.emoji_events,
+              iconColor: Colors.purple,
+              title: 'Maestro del presupuesto',
+              description: 'Alcanza un saldo positivo durante 3 meses',
+              isCompleted: false,
+            ),
+          ],
+        ),
+      );
+    }
+
+
+    Widget _buildAchievementCard({
+      required IconData icon,
+      required Color iconColor,
+      required String title,
+      required String description,
+      required bool isCompleted,
+    }) {
+      return Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: iconColor, size: 30),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isCompleted ? Colors.grey[700] : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isCompleted ? Colors.grey[500] : Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isCompleted)
+                Icon(Icons.check_circle, color: Colors.green[600], size: 24)
+            else 
+                Icon(Icons.lock, color: Colors.grey[400], size: 24),    
+          ],
+        ),
+      );
+    }
 }
