@@ -351,98 +351,195 @@ class ProfilePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Logros',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildAchievementCard(
-              icon : Icons.start,
-              iconColor: Colors.amber,
-              title : "Primer Ahorro",
-              description: 'Has realizado tu primer control',
-              isCompleted: true
-            ),
-            _buildAchievementCard(
-              icon: Icons.attach_money,
-              iconColor: Colors.green,
-              title: 'Ahorrador Constante',
-              description: 'Mantén tu presupuesto por 7 días seguidos.',
-              isCompleted: false,
-            ),
-            _buildAchievementCard(
-              icon: Icons.trending_up,
-              iconColor: Colors.blue,
-              title: 'Crecimiento Financiero',
-              description: 'Aumenta tus ahorros en un 10% en un mes',
-              isCompleted: false,
-            ),
-            _buildAchievementCard(
-              icon: Icons.emoji_events,
-              iconColor: Colors.purple,
-              title: 'Maestro del presupuesto',
-              description: 'Alcanza un saldo positivo durante 3 meses',
-              isCompleted: false,
-            ),
+            _buildSectionTitle('Retos activos'),
+            const SizedBox(height: 12),
+            _buildActiveChallanges(),
+            const SizedBox(height: 24),
+            _buildSectionTitle('Insignias'),
+            const SizedBox(height: 12),
+            _buildBadges(),
           ],
         ),
       );
     }
 
+    Widget _buildSectionTitle(String title) {
+      return Text(
+        title,
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      );
+    }
 
-    Widget _buildAchievementCard({
-      required IconData icon,
-      required Color iconColor,
-      required String title,
-      required String description,
-      required bool isCompleted,
-    }) {
+
+
+    Widget _buildActiveChallanges() {
+      return Column(
+        children: [
+          _buildChallangeCard(
+            title: 'Ahorro semanal',
+            description: 'Ahorra S/200 esta semana',
+            progress: 0.75,
+            progressText: 'S/150 / S/200',
+            color: Colors.blue[600]!
+          ),
+          const SizedBox(height: 12),
+          _buildChallangeCard(
+            title: 'Sin gastos Impulsivos',
+            description: 'Evita compras innecesarias por 5 dias',
+            progress: 0.6,
+            progressText: '3 o 5 dias',
+            color: Colors.orange[600]!
+          ),
+        ],
+      );
+    }
+
+
+    Widget _buildChallangeCard({required String title, required String description, required double progress, required String progressText, required Color color}) {
       return Card(
-        margin: const EdgeInsets.only(bottom: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: iconColor, size: 30),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isCompleted ? Colors.grey[700] : Colors.black,
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.1),
+                      shape: BoxShape.circle,
                     ),
+                    child: Icon(Icons.flag, color: color, size: 20),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: isCompleted ? Colors.grey[500] : Colors.grey[600],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            if (isCompleted)
-                Icon(Icons.check_circle, color: Colors.green[600], size: 24)
-            else 
-                Icon(Icons.lock, color: Colors.grey[400], size: 24),    
-          ],
+              const SizedBox(height: 8),
+              Text(
+                description,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    child: FractionallySizedBox(
+                      alignment: AlignmentGeometry.centerLeft,
+                      widthFactor: progress,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    progressText,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       );
     }
+
+
+    Widget _buildBadges() {
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildBadge(Icons.star, 'Primer paso', Colors.amber[600]!, true),
+              _buildBadge(Icons.trending_up, 'En ascenso', Colors.green[600]!, true),
+               _buildBadge(Icons.emoji_events, 'Campeon', Colors.purple[600]!, true),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+               _buildBadge(Icons.local_fire_department, 'En fuego', Colors.orange[600]!, false),
+               _buildBadge(Icons.military_tech, 'Experto', Colors.blue[600]!, false),
+               _buildBadge(Icons.diamond, 'Diamante', Colors.grey[400]!, false),
+            ],
+          ),
+        ],
+      );
+    }
+
+
+    Widget _buildBadge(IconData icon, String title, Color color, bool isUnlocked) {
+      return Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: isUnlocked ? color.withOpacity(0.2) : Colors.grey[200],
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isUnlocked ? color : Colors.grey[300]!,
+                width: 2,
+              ),
+            ),
+            child: Icon(
+              icon,
+              color: isUnlocked ? color : Colors.grey[400],
+              size: 30,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: isUnlocked ? Colors.black87 : Colors.grey[500],
+            ),
+          ),
+        ],
+      );
+    } 
+
+
+
+
+
+
+    //
+
 }

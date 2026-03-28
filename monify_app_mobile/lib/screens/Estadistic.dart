@@ -141,12 +141,13 @@ class _EstadisticPageState extends State<EstadisticPage> {
 
  Widget _buildSummaryCard(String title, String amount, String subtitle, IconData icon, Color color) {
   return Container(
+    padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(20),
       color: Colors.white,
       boxShadow: [
         BoxShadow(
-          color: Colors.white,
+          color: Colors.black.withOpacity(0.05),
           blurRadius: 10,
           offset: const Offset(0, 5),
           ),
@@ -301,7 +302,7 @@ class _EstadisticPageState extends State<EstadisticPage> {
 
 
  Widget _buildBarChart() {
-  return SizedBox(
+  return SizedBox(        //De Container ahora es un Sized box para permitir voltear al eje correcto el grafico
     height: 200,
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -320,14 +321,15 @@ class _EstadisticPageState extends State<EstadisticPage> {
  }
 
 
- Widget _buildBar(String day, double height, Color color) {
+ Widget _buildBar(String day, double valor, Color color) {
+  double maxValor = 62.0; //Max valor repetido, sin eso no tendriamosun valor fijo para la escala del layout
   return Column(
-    mainAxisAlignment: MainAxisAlignment.end,
+    mainAxisAlignment: MainAxisAlignment.end, //Cambio clave para que el grafico comienze del eje x, debido a que Column no estaba alineado correctamente
     children: [
       AnimatedContainer(
         duration: const Duration(milliseconds: 400),
         width: 24,
-        height: height *2.5,
+        height: (valor / maxValor) *150,
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(10),
