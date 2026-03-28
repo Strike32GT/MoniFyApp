@@ -19,10 +19,8 @@ class _EstadisticPageState extends State<EstadisticPage> {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [ Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
+          children: [ 
+            _buildHeader(),
               _buildFilterButtons(),
               const SizedBox(height: 20),
               _buildSummaryCards(),
@@ -30,8 +28,6 @@ class _EstadisticPageState extends State<EstadisticPage> {
               const SizedBox(height: 20),
               _buildWeeklyChart(),
               const SizedBox(height: 20),
-            ],
-          ),
         ],
       ),
     ),
@@ -58,7 +54,8 @@ class _EstadisticPageState extends State<EstadisticPage> {
           'Estadistica',
           style: TextStyle(
             fontSize: 28,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
           ),
         ),
       ],
@@ -114,7 +111,7 @@ class _EstadisticPageState extends State<EstadisticPage> {
 
  Widget _buildSummaryCards() {
   return Padding(
-    padding: const EdgeInsetsGeometry.symmetric(horizontal: 20.0),
+    padding: const EdgeInsets.symmetric(horizontal: 20.0),
     child: Row(
       children: [
         Expanded(
@@ -143,55 +140,60 @@ class _EstadisticPageState extends State<EstadisticPage> {
 
 
  Widget _buildSummaryCard(String title, String amount, String subtitle, IconData icon, Color color) {
-  return Card(
-    elevation: 2,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: color, size: 20),
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(20),
+      color: Colors.white,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.white,
+          blurRadius: 10,
+          offset: const Offset(0, 5),
+          ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
               ),
-              const Spacer(),
-              Icon(Icons.more_vert, color: Colors.grey[400]),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            title, 
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 12,
+              child: Icon(icon,color: color, size: 20),
             ),
+            const Spacer(),
+            Icon(Icons.more_vert, color: Colors.grey[400]),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Text(
+          title,
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 12,
           ),
-          const SizedBox(height: 4),
-          Text(
-            amount,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          amount,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
-          const SizedBox(height: 4),
-          Text(
-            subtitle,
-            style: TextStyle(
-              color: Colors.grey[500],
-              fontSize: 10,
-            ),
-          )
-        ],
-      ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          subtitle, 
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontSize: 10,
+          ),
+        ),
+      ],
     ),
   );
  }
@@ -199,7 +201,7 @@ class _EstadisticPageState extends State<EstadisticPage> {
 
  Widget _buildHighSpendingAlert() {
   return Padding(
-    padding: const EdgeInsetsGeometry.symmetric(horizontal: 20.0),
+    padding: const EdgeInsets.symmetric(horizontal: 20.0),
     child: Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -289,7 +291,7 @@ class _EstadisticPageState extends State<EstadisticPage> {
           ],
         ),
         const SizedBox(height: 16),
-        _buildBardChart(),
+        _buildBarChart(),
         const SizedBox(height: 16),
         _buildChartLegend(),
       ],
@@ -298,20 +300,20 @@ class _EstadisticPageState extends State<EstadisticPage> {
  }
 
 
- Widget _buildBardChart() {
-  return Container(
+ Widget _buildBarChart() {
+  return SizedBox(
     height: 200,
     child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _buildBar('Lun',35.0,Colors.green[600]!),
-        _buildBar('Mar',42.0,Colors.green[600]!),
-        _buildBar('Mrc',55.0,Colors.yellow[600]!),
-        _buildBar('Jue',62.0,Colors.red[600]!),
-        _buildBar('Vie',48.0,Colors.yellow[600]!),
-        _buildBar('Sab',28.0,Colors.green[600]!),
-        _buildBar('Dom',49.0,Colors.green[600]!),
+        _buildBar('Lun',28.0,Colors.green[600]!),
+        _buildBar('Mar',35.0,Colors.green[600]!),
+        _buildBar('Mie',42.0,Colors.yellow[600]!),
+        _buildBar('Jue',48.0,Colors.red[600]!),
+        _buildBar('Vie',49.0,Colors.yellow[600]!),
+        _buildBar('Sab',55.0,Colors.green[600]!),
+        _buildBar('Dom',62.0,Colors.green[600]!),
       ],
     ),
   );
@@ -320,24 +322,19 @@ class _EstadisticPageState extends State<EstadisticPage> {
 
  Widget _buildBar(String day, double height, Color color) {
   return Column(
+    mainAxisAlignment: MainAxisAlignment.end,
     children: [
-      Container(
-        width: 30,
-        height: height * 2.5,
+      AnimatedContainer(
+        duration: const Duration(milliseconds: 400),
+        width: 24,
+        height: height *2.5,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
-      const SizedBox(height: 8),
-      Text(
-        day,
-        style: TextStyle(
-          color: Colors.grey[600],
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      const SizedBox(height: 6),
+      Text(day),
     ],
   );
  }
