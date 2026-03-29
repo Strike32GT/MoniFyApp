@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:monify_app_mobile/screens/Estadistic.dart';
 import 'package:monify_app_mobile/screens/historial.dart';
 import 'package:monify_app_mobile/screens/perfil.dart';
+import 'package:monify_app_mobile/screens/widgets/Notifications.dart';
 
 class Home extends StatefulWidget{
   const Home([Key? key]) : super(key: key);
@@ -139,7 +140,7 @@ class HomePage extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          _buildHeader(),
+          _buildHeader(context),
           _buildBalanceCard(),
           _buildQuickActions(),
           _buildRecentTransactions(),
@@ -148,7 +149,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -174,7 +175,12 @@ class HomePage extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.notifications, color: Colors.white),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => const NotificationWdgt()),
+                    );
+                },
                 ),
             ],
           ),
