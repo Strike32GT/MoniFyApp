@@ -28,6 +28,8 @@ class _EstadisticPageState extends State<EstadisticPage> {
               const SizedBox(height: 20),
               _buildWeeklyChart(),
               const SizedBox(height: 20),
+              _buildExpenseChart(),
+              const SizedBox(height: 20),
         ],
       ),
     ),
@@ -372,6 +374,143 @@ class _EstadisticPageState extends State<EstadisticPage> {
         style: TextStyle(
           color: Colors.grey[600],
           fontSize: 11,
+        ),
+      ),
+    ],
+  );
+ }
+
+
+ Widget _buildExpenseChart() {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Distribucion de Gastos',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          height: 200,
+          child: Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Container(
+                  margin: const EdgeInsets.only(right: 20),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 150,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: SweepGradient(
+                            colors: [
+                              Colors.green[600]!,
+                              Colors.green[600]!,
+                              Colors.blue[600]!,
+                              Colors.blue[600]!,
+                              Colors.orange[600]!,
+                              Colors.orange[600]!,
+                              Colors.purple[600]!,
+                              Colors.purple[600]!,
+                            ],
+                            stops: [0.0, 0.3, 0.3, 0.5, 0.5, 0.75, 0.75, 1.0],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 90,
+                        height: 90,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'S/1250',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            'Total',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildCategoryItem('Comida', 'S/ 375', Colors.green[600]!),
+                    const SizedBox(height: 12),
+                    _buildCategoryItem('Transporte', 'S/ 250', Colors.blue[600]!),
+                    const SizedBox(height: 12),
+                    _buildCategoryItem('Entretenimiento', 'S/ 312', Colors.orange[600]!),
+                    const SizedBox(height: 12),
+                    _buildCategoryItem('Otros', 'S/ 313', Colors.purple[600]!),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+ }
+
+
+
+
+ Widget _buildCategoryItem(String category, String amount, Color color) {
+  return Row(
+    children: [
+      Container(
+        width: 12,
+        height: 12,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+        ),
+      ),
+      const SizedBox(width: 8),
+      Expanded(
+        child: Text(
+          category,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[700],
+          ),
+        ),
+      ),
+      Text(
+        amount,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
         ),
       ),
     ],
