@@ -176,9 +176,36 @@ class HomePage extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.notifications, color: Colors.white),
                 onPressed: () {
-                  Navigator.push(
-                    context, 
-                    MaterialPageRoute(builder: (context) => const NotificationWdgt()),
+                  List<NotificationItem> notifications = [
+                    NotificationItem(
+                      title: '¡Nuevo logro desbloqueado!', 
+                      description: 'Has completado tu primer reto de ahorro semanal', 
+                      time: 'Hace 2 horas', 
+                      type: NotificationType.achievement,
+                      isRead: false,
+                      ),
+
+                      NotificationItem(
+                      title: '¡Nuevo logro desbloqueado!', 
+                      description: 'Has gastado el 75% de tu presupuesto semanal', 
+                      time: 'Hace 4 horas', 
+                      type: NotificationType.success,
+                      isRead: true,
+                      ),
+
+
+                      NotificationItem(
+                      title: 'Nuevo reto disponible', 
+                      description: 'Participa en el reto "Sin gastos impulsivos"', 
+                      time: 'Hace 2 horas', 
+                      type: NotificationType.achievement,
+                      isRead: true,
+                      ),
+                  ];
+
+                  NotificationWdgt.showNotificationMenu(
+                    context,
+                    notifications: notifications,
                     );
                 },
                 ),
