@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:monify_app_mobile/screens/widgets/Configuration.dart';
 
 class ProfilePage extends StatelessWidget {
     const ProfilePage({Key? key}) : super(key: key);
@@ -12,7 +13,7 @@ class ProfilePage extends StatelessWidget {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                        _buildHeader(),
+                        _buildHeader(context),
                         _buildUserProfileCard(),
                         _buildCurrentStreakCard(),
                         _buildWeeklyProgress(),
@@ -23,7 +24,7 @@ class ProfilePage extends StatelessWidget {
         );
     }
 
-    Widget _buildHeader() {
+    Widget _buildHeader(BuildContext context) {
         return Padding(
             padding: const EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0, bottom: 20.0),
             child: Column(
@@ -50,8 +51,13 @@ class ProfilePage extends StatelessWidget {
                             ),
                             IconButton(
                                 icon: Icon(Icons.settings, color: Colors.grey[600]),
-                                onPressed: () {},
-                            )
+                                onPressed: () {
+                                  Navigator.push(
+                                    context, 
+                                    MaterialPageRoute(builder: (context) => ConfigurationPage()),
+                                    );
+                                },
+                            ),
                         ],
                     ),
                 ],
@@ -449,7 +455,7 @@ class ProfilePage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(3),
                     ),
                     child: FractionallySizedBox(
-                      alignment: AlignmentGeometry.centerLeft,
+                      alignment: Alignment.centerLeft,
                       widthFactor: progress,
                       child: Container(
                         decoration: BoxDecoration(
