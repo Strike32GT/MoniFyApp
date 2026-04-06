@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:monify_app_mobile/data/services/api_service.dart';
+import 'package:monify_app_mobile/data/services/auth_service.dart';
 import 'package:monify_app_mobile/screens/Loading.dart';
 import 'package:monify_app_mobile/screens/auth/CreateAccount.dart';
 
@@ -14,14 +16,20 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  late ApiService _apiService;
+  late AuthService _authService;
+  String? _errorMessage;
 
-  final String EmailInput = 'hola@gmail.com';
-  final String PasswordInput = '123456';
-
-
+  @override
+  void initState() {
+    super.initState();
+    _apiService = ApiService();
+    _authService = AuthService(_apiService);
+  }
 
   @override 
   Widget build(BuildContext context) {
@@ -136,6 +144,22 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
+          if (_errorMessage != null) 
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(12),
+              margin: EdgeInsets.only(bottom: 10),
+              decoration: BoxDecoration(
+                color: Colors.red[50],
+                border: Border.all(color: Colors.red[200]!),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                _errorMessage!,
+                style: TextStyle(color: Colors.red[700]),
+              ),
+            ),
+            
           const SizedBox(height: 20),
           _buildLoginButton(),
           const SizedBox(height: 20),
