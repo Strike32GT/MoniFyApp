@@ -8,56 +8,43 @@ class UpdateStreakUsecase {
 
   Future<StreakEntity> execute() async {
     try {
-      //Racha actual
-      final currentStreak = await _repository.getStreak();
-
-      //Calculo de nueva racha
-      final today = DateTime.now();
-      final newStreakData = _calculateNewStreak(currentStreak, today);
-
-      //Actualizar racha
-      final updatedStreak = await _repository.updateStreak(
-        rachaActual: newStreakData['racha_actual'],
-        mejorRacha: newStreakData['mejor_racha'],
-        ultimaFecha: newStreakData['ultima_fecha'],
-      );
-
-
-      //Verifica estado de la racha(mejoro/empeoro)
+      final updatedStreak = await _repository.updateStreak();
       _checkStreakMilestones(updatedStreak);
       return updatedStreak;
     } catch (e) {
       throw Exception('Error al actualizar racha: $e');
-    } 
-  }
-
-
-  Future<StreakEntity> executeWithDate(DateTime specificdate) async {
-    try {
-      final currentStreak = await _repository.getStreak();
-      final newStreakData = _calculateNewStreak(currentStreak, specificdate);
-
-      final updateStreak = await _repository.updateStreak(
-        rachaActual: newStreakData['racha_actual'],
-        mejorRacha: newStreakData['mejor_racha'],
-        ultimaFecha: newStreakData['ultima_fecha'],
-      );
-
-      _checkStreakMilestones(updateStreak);
-      return updateStreak;
-    } catch (e) {
-      throw Exception('Error al actualizar racha con fecha específica: $e');
     }
   }
 
+  Future<StreakEntity> executeWithDate(DateTime specificDate) async {
+    try {
+      final currentStreak = await _repository.getStreak();
+      final newStreakData = _calculateNewStreak(currentStreak, specificDate);
 
-  Map<String, dynamic> _calculateNewStreak(StreakEntity currentStreak, DateTime today) {
+      final updatedStreak = StreakEntity(
+        id: currentStreak.id,
+        userId: currentStreak.userId,
+        rachaActual: newStreakData['racha_actual'] as int,
+        mejorRacha: newStreakData['mejor_racha'] as int,
+        ultimaFecha: newStreakData['ultima_fecha'] as DateTime,
+      );
+
+      _checkStreakMilestones(updatedStreak);
+      return updatedStreak;
+    } catch (e) {
+      throw Exception('Error al actualizar racha con fecha especifica: $e');
+    }
+  }
+
+  Map<String, dynamic> _calculateNewStreak(
+    StreakEntity currentStreak,
+    DateTime today,
+  ) {
     final newRacha = currentStreak.calculateNewStreak(today);
     final isPersonalBest = newRacha > currentStreak.mejorRacha;
 
-
     return {
-      'racha_actual' : newRacha,
+      'racha_actual': newRacha,
       'mejor_racha': isPersonalBest ? newRacha : currentStreak.mejorRacha,
       'ultima_fecha': today,
       'is_personal_best': isPersonalBest,
@@ -66,8 +53,6 @@ class UpdateStreakUsecase {
     };
   }
 
-
-  //Notificar hitos de racha
   void _checkStreakMilestones(StreakEntity streak) {
     final milestones = _getStreakMilestones(streak);
 
@@ -79,53 +64,65 @@ class UpdateStreakUsecase {
   List<String> _getStreakMilestones(StreakEntity streak) {
     final milestones = <String>[];
 
-    if (streak.rachaActual == 1 && streak.ultimaFecha?.day == DateTime.now().day) {
-      milestones.add('¡Comenzaste una nueva racha hoy!');
+    if (_isSameDay(streak.ultimaFecha, DateTime.now()) && streak.rachaActual == 1) {
+      milestones.add('Comenzaste una nueva racha hoy!');
     }
-    
+
     if (streak.rachaActual == 3) {
-      milestones.add('¡3 días seguidos! Sigue así');
+      milestones.add('3 dias seguidos! Sigue asi');
     }
-    
+
     if (streak.rachaActual == 7) {
-      milestones.add('¡Una semana completa! 🎉');
+      milestones.add('Una semana completa!');
     }
-    
+
     if (streak.rachaActual == 14) {
-      milestones.add('¡Dos semanas seguidas! 🔥');
+      milestones.add('Dos semanas seguidas!');
     }
-    
+
     if (streak.rachaActual == 30) {
-      milestones.add('¡Un mes completo! Eres increíble 💪');
+      milestones.add('Un mes completo! Eres increible');
     }
-    
+
     if (streak.rachaActual == 100) {
-      milestones.add('¡100 días! Eres leyenda 🏆');
+      milestones.add('100 dias! Eres leyenda');
     }
-    
+
     if (streak.isPersonalBest() && streak.rachaActual > 1) {
-      milestones.add('¡Nueva mejor racha personal! 🌟');
+      milestones.add('Nueva mejor racha personal!');
     }
 
     return milestones;
   }
 
+  bool _isSameDay(DateTime? firstDate, DateTime secondDate) {
+    if (firstDate == null) {
+      return false;
+    }
+
+    return firstDate.year == secondDate.year &&
+        firstDate.month == secondDate.month &&
+        firstDate.day == secondDate.day;
+  }
 
   void _notifyStreakMilestone(String message) {
     print('Streak Milestone: $message');
   }
-
 
   Future<bool> shouldUpdateStreakToday() async {
     try {
       final currentStreak = await _repository.getStreak();
       final today = DateTime.now();
 
-      if(currentStreak.ultimaFecha != null) {
+      if (currentStreak.ultimaFecha != null) {
         final lastUpdate = currentStreak.ultimaFecha!;
         final todayDate = DateTime(today.year, today.month, today.day);
-        final lastUpdateDate = DateTime(lastUpdate.year, lastUpdate.month, lastUpdate.day);
-        
+        final lastUpdateDate = DateTime(
+          lastUpdate.year,
+          lastUpdate.month,
+          lastUpdate.day,
+        );
+
         return !todayDate.isAtSameMomentAs(lastUpdateDate);
       }
 
@@ -134,7 +131,6 @@ class UpdateStreakUsecase {
       return true;
     }
   }
-
 
   Future<Map<String, dynamic>> getStreakStats() async {
     try {
@@ -150,13 +146,12 @@ class UpdateStreakUsecase {
         'streak_percentage': _getStreakPercentage(currentStreak),
       };
     } catch (e) {
-      throw Exception('Error al obtener estadísticas de racha: $e');
+      throw Exception('Error al obtener estadisticas de racha: $e');
     }
   }
 
-
   int _getDaysToNextMilestone(int currentStreak) {
-    final milestones = [3,7,14,30,60,100,365];
+    final milestones = [3, 7, 14, 30, 60, 100, 365];
 
     for (final milestone in milestones) {
       if (currentStreak < milestone) {
@@ -164,22 +159,22 @@ class UpdateStreakUsecase {
       }
     }
 
-    return 0; //Alcanzo todos los hitos
+    return 0;
   }
 
   String _getStreakStatus(StreakEntity streak) {
-    if(!streak.hasActiveStreak()) {
+    if (!streak.hasActiveStreak()) {
       return 'inactive';
     }
 
     if (streak.isPersonalBest()) {
       return 'personal_best';
     }
-    
+
     if (streak.rachaActual >= 7) {
       return 'excellent';
     }
-    
+
     if (streak.rachaActual >= 3) {
       return 'good';
     }
@@ -187,23 +182,17 @@ class UpdateStreakUsecase {
     return 'active';
   }
 
-
   double _getStreakPercentage(StreakEntity streak) {
-    if (streak.mejorRacha == 0) return 0.0;
+    if (streak.mejorRacha == 0) {
+      return 0.0;
+    }
+
     return (streak.rachaActual / streak.mejorRacha) * 100;
   }
 
-
   Future<void> resetStreak() async {
-      try {
-        final currentStreak = await _repository.getStreak();
-        await _repository.updateStreak(
-          rachaActual: 1,
-          mejorRacha: currentStreak.mejorRacha,
-          ultimaFecha: DateTime.now(),
-        );
-      } catch (e) {
-        throw Exception('Error al reiniciar racha: $e');
-      }
+    throw UnimplementedError(
+      'resetStreak requiere un endpoint o metodo de repositorio dedicado.',
+    );
   }
 }

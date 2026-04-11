@@ -1,37 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:monify_app_mobile/data/services/api_service.dart';
-import 'package:monify_app_mobile/data/services/auth_service.dart';
 import 'package:monify_app_mobile/screens/Loading.dart';
 import 'package:monify_app_mobile/screens/auth/CreateAccount.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
-
-  @override 
-  State<LoginPage> createState()  => _LoginPageState();
+  @override
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-
-
 class _LoginPageState extends State<LoginPage> {
-  bool _isPasswordVisible = false;
-  bool _isLoading = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final ApiService _apiService = ApiService();
 
-  late ApiService _apiService;
-  late AuthService _authService;
+  bool _isPasswordVisible = false;
+  bool _isLoading = false;
   String? _errorMessage;
 
   @override
-  void initState() {
-    super.initState();
-    _apiService = ApiService();
-    _authService = AuthService(_apiService);
-  }
-
-  @override 
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -46,12 +34,10 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
-
   Widget _buildTopSection() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(top: 80.0, bottom: 40.0),
+      padding: const EdgeInsets.only(top: 80, bottom: 40),
       color: Colors.white,
       child: Column(
         children: [
@@ -74,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
               Text(
                 'Monify',
                 style: TextStyle(
-                  fontSize: 36.0,
+                  fontSize: 36,
                   fontWeight: FontWeight.bold,
                   color: Colors.green[700],
                 ),
@@ -88,17 +74,16 @@ class _LoginPageState extends State<LoginPage> {
               fontSize: 16,
               color: Colors.grey[600],
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
-
   Widget _buildLoginForm() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-      padding: const EdgeInsets.all(25.0),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -137,18 +122,18 @@ class _LoginPageState extends State<LoginPage> {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () {},
+              onPressed: _isLoading ? null : () {},
               child: Text(
                 'Olvidaste tu password?',
                 style: TextStyle(color: Colors.green[600]),
               ),
             ),
           ),
-          if (_errorMessage != null) 
+          if (_errorMessage != null) ...[
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(12),
-              margin: EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(bottom: 10),
               decoration: BoxDecoration(
                 color: Colors.red[50],
                 border: Border.all(color: Colors.red[200]!),
@@ -159,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(color: Colors.red[700]),
               ),
             ),
-            
+          ],
           const SizedBox(height: 20),
           _buildLoginButton(),
           const SizedBox(height: 20),
@@ -170,7 +155,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
 
   Widget _buildEmailInputField() {
     return Column(
@@ -187,6 +171,8 @@ class _LoginPageState extends State<LoginPage> {
         const SizedBox(height: 8),
         TextField(
           controller: _emailController,
+          keyboardType: TextInputType.emailAddress,
+          enabled: !_isLoading,
           decoration: InputDecoration(
             hintText: 'tu@email.com',
             border: OutlineInputBorder(
@@ -204,13 +190,12 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
   Widget _buildPasswordInputField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Contraseña',
+          'Contrasena',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -221,6 +206,8 @@ class _LoginPageState extends State<LoginPage> {
         TextField(
           controller: _passwordController,
           obscureText: !_isPasswordVisible,
+          enabled: !_isLoading,
+          onSubmitted: (_) => _login(),
           decoration: InputDecoration(
             hintText: '********',
             border: OutlineInputBorder(
@@ -249,33 +236,38 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
-
   Widget _buildLoginButton() {
     return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: _validateLogin, 
+        onPressed: _isLoading ? null : _login,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green[600],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: const Text(
-          'Iniciar Sesion',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+        child: _isLoading
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : const Text(
+                'Iniciar Sesion',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
       ),
     );
   }
-
-
 
   Widget _buildSignUpSection() {
     return Row(
@@ -286,12 +278,16 @@ class _LoginPageState extends State<LoginPage> {
           style: TextStyle(color: Colors.grey[600]),
         ),
         TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CreateAccount()),
-              );
-          },
+          onPressed: _isLoading
+              ? null
+              : () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CreateAccount(),
+                    ),
+                  );
+                },
           child: Text(
             'Registrate',
             style: TextStyle(
@@ -303,8 +299,6 @@ class _LoginPageState extends State<LoginPage> {
       ],
     );
   }
-
-
 
   Widget _buildDemoInfo() {
     return Container(
@@ -319,10 +313,10 @@ class _LoginPageState extends State<LoginPage> {
         children: [
           Row(
             children: [
-              Icon(Icons.info, color: Colors.green[600]!, size: 20),
+              Icon(Icons.info, color: Colors.green[600], size: 20),
               const SizedBox(width: 8),
               const Text(
-                'Cuenta Demo',
+                'Inicio de sesion',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -332,7 +326,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Usuario: demo@monify.com',
+            'Ingresa tu correo y tu contrasena registrados.',
             style: TextStyle(
               color: Colors.grey[700],
               fontSize: 12,
@@ -340,53 +334,83 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
-    );    
-  }
-
-
-
-  void _validateLogin() {
-    String email = _emailController.text.trim();
-    String password = _passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      _showAlert('Por favor, completa todos los campos');
-      return;
-    }
-
-
-    if (email == EmailInput && password == PasswordInput ) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const LoadingScreen(userName: 'Fernando')),
-      );
-    } else {
-      _showAlert('Información incorrecta');
-    }
-  }
-
-
-  void _showAlert(String message) {
-    showDialog(
-      context: context, 
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Alerta'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
     );
   }
 
+  Future<void> _login() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
 
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        _errorMessage = 'Por favor, completa todos los campos';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final response = await _apiService.post('/users/login/', {
+        'correo': email,
+        'password': password,
+      });
+
+      final tokens = response['tokens'] as Map<String, dynamic>?;
+      final user = response['user'] as Map<String, dynamic>?;
+
+      if (tokens == null || user == null) {
+        throw Exception('Respuesta invalida del servidor');
+      }
+
+      final accessToken = tokens['access']?.toString();
+      if (accessToken == null || accessToken.isEmpty) {
+        throw Exception('No se recibio token de acceso');
+      }
+
+      _apiService.setAuthToken(accessToken);
+
+      if (!mounted) {
+        return;
+      }
+
+      final userName = user['nombre']?.toString() ?? 'Usuario';
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoadingScreen(userName: userName),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) {
+        return;
+      }
+
+      final errorText = e.toString().toLowerCase();
+
+      setState(() {
+        if (errorText.contains('400') ||
+            errorText.contains('401') ||
+            errorText.contains('credenciales') ||
+            errorText.contains('no active account') ||
+            errorText.contains('cuenta')) {
+          _errorMessage = 'Cuenta no existente o contrasena incorrecta';
+        } else {
+          _errorMessage = e.toString().replaceFirst('Exception: ', '');
+        }
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {

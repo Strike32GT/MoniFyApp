@@ -1,10 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:monify_app_mobile/domain/entities/transaction_entity.dart';
+import 'package:monify_app_mobile/domain/usecases/transactions/create_transaction_usecase.dart';
+import 'package:monify_app_mobile/domain/usecases/transactions/get_transactions_usecase.dart';
 
-class HistoryViewmodel extends ChangeNotifier {
-  final GetTransactionsUseCase  _getTransactionsUseCase;
-  final CreateTransactionUseCase  _createTransactionUseCase;
+class HistoryViewModel extends ChangeNotifier {
+  final GetTransactionsUsecase _getTransactionsUsecase;
+  final CreateTransactionUsecase _createTransactionUsecase;
 
+  HistoryViewModel(
+    this._getTransactionsUsecase,
+    this._createTransactionUsecase,
+  );
 
   bool _isLoading = false;
   bool _isCreating = false;
@@ -13,11 +19,6 @@ class HistoryViewmodel extends ChangeNotifier {
   List<TransactionEntity> _filteredTransactions = [];
   String _searchQuery = '';
   String _selectedFilter = 'todos';
-
-  HistoryViewmodel(
-    this._getTransactionsUseCase,
-    this._createTransactionUseCase,
-  );
 
   bool get isLoading => _isLoading;
   bool get isCreating => _isCreating;
@@ -28,16 +29,16 @@ class HistoryViewmodel extends ChangeNotifier {
   String get selectedFilter => _selectedFilter;
 
   Future<void> loadTransactions() async {
-    _setLoading(false);
+    _setLoading(true);
     _clearError();
 
     try {
-      _transactions = await _getTransactionsUseCase.execute();
+      _transactions = await _getTransactionsUsecase.execute();
       _applyFilters();
-      notifyListeners();
     } catch (e) {
       _errorMessage = e.toString();
-      notifyListeners();
+    } finally {
+      _setLoading(false);
     }
   }
 
@@ -45,28 +46,29 @@ class HistoryViewmodel extends ChangeNotifier {
     required int categoryId,
     required String tipo,
     required double monto,
-    String? descripcion
+    String? descripcion,
   }) async {
     _setCreating(true);
     _clearError();
 
     try {
       final transaction = TransactionEntity(
-        id: 0, 
-        userId: 1, 
-        categoryId: categoryId, 
-        tipo: tipo, 
-        monto: monto, 
+        id: 0,
+        userId: 0,
+        categoryId: categoryId,
+        tipo: tipo,
+        monto: monto,
+        descripcion: descripcion,
         fecha: DateTime.now(),
-        );
+      );
 
-        final newTransaction = await _createTransactionUseCase.execute(transaction);
-        _transactions.insert(0, newTransaction);
-        _applyFilters();
-        notifyListeners();
+      final newTransaction = await _createTransactionUsecase.execute(transaction);
+      _transactions.insert(0, newTransaction);
+      _applyFilters();
     } catch (e) {
       _errorMessage = e.toString();
-      notifyListeners();
+    } finally {
+      _setCreating(false);
     }
   }
 
@@ -76,25 +78,30 @@ class HistoryViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-
-  void filterTransactions (String filter) {
+  void filterTransactions(String filter) {
     _selectedFilter = filter;
     _applyFilters();
     notifyListeners();
   }
 
+  void clearFilters() {
+    _searchQuery = '';
+    _selectedFilter = 'todos';
+    _applyFilters();
+    notifyListeners();
+  }
 
   void _applyFilters() {
     _filteredTransactions = _transactions.where((transaction) {
-      //Filtro por busqueda
-      bool matchesSearch = true;
+      var matchesSearch = true;
       if (_searchQuery.isNotEmpty) {
-        matchesSearch = transaction.descripcion?.toLowerCase().contains(_searchQuery) == true ||
-                                    transaction.monto.toString().contains(_searchQuery);
+        matchesSearch =
+            transaction.descripcion?.toLowerCase().contains(_searchQuery) == true ||
+            transaction.monto.toString().contains(_searchQuery);
       }
 
-      bool matchesFilter = true;
-      if(_selectedFilter != 'todos') {
+      var matchesFilter = true;
+      if (_selectedFilter != 'todos') {
         matchesFilter = transaction.tipo == _selectedFilter;
       }
 
@@ -102,44 +109,36 @@ class HistoryViewmodel extends ChangeNotifier {
     }).toList();
   }
 
-
   void _setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
   }
-
 
   void _setCreating(bool creating) {
     _isCreating = creating;
     notifyListeners();
   }
 
-
   void _clearError() {
     _errorMessage = null;
-    notifyListeners();
   }
 
   void clearError() {
     _clearError();
+    notifyListeners();
   }
-
 
   double get totalIncome {
     return _filteredTransactions
-    .where((t) => t.tipo == 'ingreso')
-    .fold(0.0, (sum,t) => sum +t.monto);
+        .where((t) => t.tipo == 'ingreso')
+        .fold(0.0, (sum, t) => sum + t.monto);
   }
-
 
   double get totalExpense {
     return _filteredTransactions
-    .where((t) => t.tipo == 'gasto')
-    .fold(0.0, (sum,t) => sum +t.monto);
+        .where((t) => t.tipo == 'gasto')
+        .fold(0.0, (sum, t) => sum + t.monto);
   }
 
-
-  double get balance {
-    return totalIncome - totalExpense;
-  }
+  double get balance => totalIncome - totalExpense;
 }
