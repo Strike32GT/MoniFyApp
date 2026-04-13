@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:monify_app_mobile/data/services/api_service.dart';
 
 class CreateAccount extends StatefulWidget {
   const CreateAccount({Key? key}) : super(key: key);
@@ -9,7 +10,9 @@ class CreateAccount extends StatefulWidget {
 
 
 class _CreateAccountState extends State<CreateAccount> {
-
+  final ApiService _apiService = ApiService();
+  bool _isLoading = false;
+  String? _errorMessage;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -117,7 +120,23 @@ class _CreateAccountState extends State<CreateAccount> {
           _buildPasswordField(),
           const SizedBox(height: 20),
           _buildConfirmPasswordField(),
-          const SizedBox(height: 30),
+          const SizedBox(height: 20),
+          if (_errorMessage != null)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+              color: Colors.red[50],
+              border: Border.all(color: Colors.red[200]!),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              _errorMessage!,
+              style: TextStyle(color: Colors.red[700]),
+            ),
+          ),
+          const SizedBox(height: 10),
           _buildCreateAccountButton(),
           const SizedBox(height: 20),
           _buildBackToLoginSection(),
@@ -291,14 +310,23 @@ class _CreateAccountState extends State<CreateAccount> {
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: _validateAndCreateAccount,
+        onPressed: _isLoading ? null : _validateAndCreateAccount,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.green[600],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: const Text(
+        child: _isLoading
+        ? const SizedBox(
+          width: 22,
+          height: 22,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.5,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        )
+        : const Text(
           'Crear cuenta',
           style: TextStyle(
             fontSize: 16,
@@ -338,54 +366,83 @@ class _CreateAccountState extends State<CreateAccount> {
 
 
 
-  void _validateAndCreateAccount() {
-    String name = _nameController.text.trim();
-    String email = _emailController.text.trim();
-    String password = _passwordController.text.trim();
-    String confirmPassword = _confirmPasswordController.text.trim();
+  Future<void> _validateAndCreateAccount() async {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
     
 
     if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
-      _showAlert('Por favor, completa todos los campos');
+      setState(() {
+        _errorMessage = 'Por favor, complete todos los campos';
+      });
       return;
     }
 
 
 
     if (password != confirmPassword) {
-      _showAlert('Las contraseñas no coinciden');
+      setState(() {
+        _errorMessage = 'Los passwords no coinciden';
+      });
       return;
     }
 
 
     if (password.length < 6) {
-      _showAlert('La contraseña debe tener al menos 6 caracteres');
+      setState(() {
+        _errorMessage='El password debe tener 6 caracteres como minimo';
+      });
       return;
     }
 
 
-    _showAlert('Cuenta creada exitosamente');
-  }
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
 
+    try {
+      final response = await _apiService.post('/users/register/', {
+        'nombre' : name,
+        'correo': email,
+        'password': password,
+        'rol': 'usuario',
+      });
 
-  void _showAlert(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Alerta'),
+      final message = response['message']?.toString() ?? 'Cuenta creada exitosamente';
+
+      if (!mounted) return;
+
+      await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Registro Exitoso'),
           content: Text(message),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(), 
               child: const Text('OK'),
-            ),
+              ),
           ],
-        );
+        ),
+      );
+
+      if (!mounted) return;
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
-    );
+    }
   }
 
 
