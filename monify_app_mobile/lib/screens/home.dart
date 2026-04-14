@@ -6,7 +6,9 @@ import 'package:monify_app_mobile/screens/widgets/Notifications.dart';
 import 'package:monify_app_mobile/screens/widgets/add_expense_modal.dart';
 
 class Home extends StatefulWidget{
-  const Home([Key? key]) : super(key: key);
+  final String userName; //El nombre del usuario "Hola ${userName}""
+  final String userEmail;
+  const Home({Key? key, required this.userName, required this.userEmail}) : super(key: key);
 
   @override 
   State<Home> createState() => _HomeState();
@@ -16,11 +18,11 @@ class Home extends StatefulWidget{
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    const HomePage(),
+  List<Widget> get _pages => [
+    HomePage(userName: widget.userName),
     const EstadisticPage(),
     const HistoryPage(),
-    const ProfilePage(),
+    ProfilePage(userName: widget.userName, userEmail: widget.userEmail),
   ];
 
 
@@ -138,7 +140,8 @@ class _HomeState extends State<Home> {
 
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final String userName;
+  const HomePage({Key? key, required this.userName}) : super(key: key);
 
   @override 
   Widget build(BuildContext context) {
@@ -170,9 +173,9 @@ class HomePage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Hola usuario',
-                style: TextStyle(
+              Text(
+                'Hola ${userName}',
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

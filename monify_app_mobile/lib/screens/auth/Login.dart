@@ -378,11 +378,13 @@ class _LoginPageState extends State<LoginPage> {
       }
 
       final userName = user['nombre']?.toString() ?? 'Usuario';
+      final userEmail = user['correo']?.toString() ?? '';
+
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => LoadingScreen(userName: userName),
+          builder: (context) => LoadingScreen(userName: userName, userEmail: userEmail),
         ),
       );
     } catch (e) {

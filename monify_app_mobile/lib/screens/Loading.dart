@@ -6,7 +6,8 @@ import 'package:monify_app_mobile/screens/home.dart';
 class LoadingScreen extends StatefulWidget {
   
   final String userName;
-  const LoadingScreen({Key? key, this.userName = 'Usuario'}) : super(key: key);
+  final String userEmail;
+  const LoadingScreen({Key? key, this.userName = 'Usuario', required this.userEmail}) : super(key: key);
 
   @override 
   State<LoadingScreen> createState() => _LoadingScreenState(); 
@@ -48,7 +49,7 @@ class  _LoadingScreenState extends State<LoadingScreen> with TickerProviderState
       Timer(const Duration(seconds: 3), () {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const Home()),
+          MaterialPageRoute(builder: (context) => Home(userName: widget.userName, userEmail: widget.userEmail,)),
           );
       });
   }
@@ -116,7 +117,7 @@ class  _LoadingScreenState extends State<LoadingScreen> with TickerProviderState
                 return FadeTransition(
                   opacity: _fadeAnimation,
                   child: Text(
-                    'Tu cuenta ha sido creada exitosamente',
+                    'Preparando tu experiencia en Monify',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,

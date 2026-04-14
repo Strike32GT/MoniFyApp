@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:monify_app_mobile/screens/widgets/Configuration.dart';
 
 class ProfilePage extends StatelessWidget {
-    const ProfilePage({Key? key}) : super(key: key);
+  final String userName;
+  final String userEmail;
+    const ProfilePage({Key? key, required this.userName, required this.userEmail}) : super(key: key);
 
 
     @override 
@@ -54,7 +56,7 @@ class ProfilePage extends StatelessWidget {
                                 onPressed: () {
                                   Navigator.push(
                                     context, 
-                                    MaterialPageRoute(builder: (context) => ConfigurationPage()),
+                                    MaterialPageRoute(builder: (context) => ConfigurationPage(userName:userName, userEmail: userEmail)),
                                     );
                                 },
                             ),
@@ -85,8 +87,8 @@ class ProfilePage extends StatelessWidget {
                                             CircleAvatar(
                                                 radius: 30,
                                                 backgroundColor: Colors.green[400],
-                                                child: const Text(
-                                                    'F',
+                                                child: Text(
+                                                    userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
                                                     style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 28,
@@ -120,8 +122,8 @@ class ProfilePage extends StatelessWidget {
                                         child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                                const Text(
-                                                    'Fernando Mas',
+                                                Text(
+                                                    userName,
                                                     style: TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 20,
@@ -130,7 +132,7 @@ class ProfilePage extends StatelessWidget {
                                                 ),
                                                 const SizedBox(height: 4),
                                                 Text(
-                                                    'maspinto@gmail.com',
+                                                    userEmail,
                                                     style: TextStyle(
                                                         color: Colors.white.withOpacity(0.8),
                                                         fontSize: 14,

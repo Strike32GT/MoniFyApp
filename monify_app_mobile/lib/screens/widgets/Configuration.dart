@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ConfigurationPage extends StatefulWidget {
-  const ConfigurationPage({Key? key}) : super(key: key);
+  final String userName;
+  final String userEmail;
+  const ConfigurationPage({Key? key, required this.userName, required this.userEmail}) : super(key: key);
 
   @override
   State<ConfigurationPage> createState() => _ConfigurationPageState();
@@ -46,7 +48,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
             const SizedBox(height: 20),
             _buildAboutSection(),
             const SizedBox(height: 20),
-            _buildAboutSection(),
+            _buildLogoutButton(),
           ],
         ),
       ),
@@ -73,8 +75,8 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
               CircleAvatar(
                 radius: 50,
                 backgroundColor: Colors.green[400],
-                child: const Text(
-                  'F',
+                child: Text(
+                  widget.userName.isNotEmpty ? widget.userName[0].toUpperCase() : 'U',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -102,8 +104,8 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
             ],
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Fernando Mas',
+          Text(
+            widget.userName,
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -112,9 +114,9 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
           ),
           const SizedBox(height: 4),
           Text(
-            'mas@gmail.com',
+            widget.userEmail,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withOpacity(0.8),
               fontSize: 16,
             ),
           ),
