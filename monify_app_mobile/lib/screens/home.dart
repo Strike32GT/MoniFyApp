@@ -3,6 +3,7 @@ import 'package:monify_app_mobile/screens/Estadistic.dart';
 import 'package:monify_app_mobile/screens/historial.dart';
 import 'package:monify_app_mobile/screens/perfil.dart';
 import 'package:monify_app_mobile/screens/widgets/Notifications.dart';
+import 'package:monify_app_mobile/screens/widgets/add_expense_modal.dart';
 
 class Home extends StatefulWidget{
   const Home([Key? key]) : super(key: key);
@@ -18,11 +19,19 @@ class _HomeState extends State<Home> {
   final List<Widget> _pages = [
     const HomePage(),
     const EstadisticPage(),
-    const Center(child: Text('Agregar', style: TextStyle(fontSize: 24))),
     const HistoryPage(),
     const ProfilePage(),
   ];
 
+
+  void _openAddExpenseModal() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const AddExpenseModal(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +59,8 @@ class _HomeState extends State<Home> {
               offset: const Offset(0.0,-20.0),
               child: _buildAddButton(),
             ),
-            _buildNavItem(3,Icons.history_outlined,'Historial'),
-            _buildNavItem(4,Icons.person_outline,'Perfil')
+            _buildNavItem(2,Icons.history_outlined,'Historial'),
+            _buildNavItem(3,Icons.person_outline,'Perfil')
           ],
         ),
       ),
@@ -96,11 +105,7 @@ class _HomeState extends State<Home> {
 
   Widget _buildAddButton() {
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _currentIndex = 2;
-        });
-      },
+      onTap: _openAddExpenseModal,
       child: Container(
         width: 56,
         height: 56,
