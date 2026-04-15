@@ -4,6 +4,8 @@ import 'package:monify_app_mobile/screens/historial.dart';
 import 'package:monify_app_mobile/screens/perfil.dart';
 import 'package:monify_app_mobile/screens/widgets/Notifications.dart';
 import 'package:monify_app_mobile/screens/widgets/add_expense_modal.dart';
+import 'package:monify_app_mobile/themes/dark_theme.dart';
+import 'package:monify_app_mobile/themes/normal_theme.dart';
 
 class Home extends StatefulWidget{
   final String userName; //El nombre del usuario "Hola ${userName}""
@@ -37,40 +39,52 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: Container(
         height: 80,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? DarkTheme.surface : Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0.0,-2),
+              color: Colors.black.withOpacity(isDark ? 0.28 : 0.1),
+              blurRadius: isDark ? 18 : 10,
+              offset: const Offset(0.0, -2),
             ),
           ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(0,Icons.home_outlined,'Inicio'),
-            _buildNavItem(1,Icons.bar_chart_outlined,'Estadistica'),
+            _buildNavItem(0, Icons.home_outlined, 'Inicio', colorScheme, isDark),
+            _buildNavItem(1, Icons.bar_chart_outlined, 'Estadistica', colorScheme, isDark),
             //_buildAddButton(),
             Transform.translate(
-              offset: const Offset(0.0,-20.0),
-              child: _buildAddButton(),
+              offset: const Offset(0.0, -20.0),
+              child: _buildAddButton(colorScheme),
             ),
-            _buildNavItem(2,Icons.history_outlined,'Historial'),
-            _buildNavItem(3,Icons.person_outline,'Perfil')
+            _buildNavItem(2, Icons.history_outlined, 'Historial', colorScheme, isDark),
+            _buildNavItem(3, Icons.person_outline, 'Perfil', colorScheme, isDark),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
+  Widget _buildNavItem(
+    int index,
+    IconData icon,
+    String label,
+    ColorScheme colorScheme,
+    bool isDark,
+  ) {
     final isActive = _currentIndex == index;
+    final activeColor = colorScheme.primary;
+    final inactiveColor = isDark ? DarkTheme.textSecondary : Colors.grey[600]!;
 
     return GestureDetector(
       onTap: () {
@@ -78,26 +92,28 @@ class _HomeState extends State<Home> {
           _currentIndex = index;
         });
       },
-      child: Container(
-        width: 48,
-        height: 48,
+      child: SizedBox(
+        width: 60,
+        height: 60,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
-              size: 24,
-              color: isActive ? Colors.green[600] : Colors.grey[600],
+              size: 22,
+              color: isActive ? activeColor : inactiveColor,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 9,
+                color: isActive ? activeColor : inactiveColor,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
               ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: isActive ? Colors.green : Colors.grey[600],
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.normal
-                ),
-              ),
+            ),
           ],
         ),
       ),
@@ -105,24 +121,24 @@ class _HomeState extends State<Home> {
   }
 
 
-  Widget _buildAddButton() {
+  Widget _buildAddButton(ColorScheme colorScheme) {
     return GestureDetector(
       onTap: _openAddExpenseModal,
       child: Container(
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: Colors.green[600],
+          color: colorScheme.primary,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.green.withOpacity(0.7),
+              color: colorScheme.primary.withOpacity(0.55),
               blurRadius: 15,
               spreadRadius: 3,
               offset: const Offset(0, 0),
             ),
             BoxShadow(
-              color: Colors.green.withOpacity(0.3),
+              color: colorScheme.primary.withOpacity(0.25),
               blurRadius: 10,
               offset: const Offset(0, 5),
             )
@@ -149,9 +165,9 @@ class HomePage extends StatelessWidget {
       child: Column(
         children: [
           _buildHeader(context),
-          _buildBalanceCard(),
-          _buildQuickActions(),
-          _buildRecentTransactions(),
+          _buildBalanceCard(context),
+          _buildQuickActions(context),
+          _buildRecentTransactions(context),
         ],
       ),
     );
@@ -161,7 +177,7 @@ class HomePage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.green[600],
+        color: NormalTheme.primaryGreen,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
@@ -239,7 +255,7 @@ class HomePage extends StatelessWidget {
 
 
 
-  Widget _buildBalanceCard() {
+  Widget _buildBalanceCard(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Card(
@@ -273,7 +289,10 @@ class HomePage extends StatelessWidget {
           child: Icon(icon,color: color, size: 24),
         ),
         const SizedBox(height: 8),
-        Text(title, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+        Text(
+          title,
+          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+        ),
         Text(
           amount,
           style: TextStyle(
@@ -288,47 +307,60 @@ class HomePage extends StatelessWidget {
 
 
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildActionButton('Enviar',Icons.send),
-          _buildActionButton('Recibir',Icons.call_received),
-          _buildActionButton('Pagar',Icons.payment),
+          _buildActionButton(context, 'Enviar', Icons.send),
+          _buildActionButton(context, 'Recibir', Icons.call_received),
+          _buildActionButton(context, 'Pagar', Icons.payment),
         ],
       ),
     );
   }
 
-  Widget _buildActionButton(String label, IconData icon) {
+  Widget _buildActionButton(BuildContext context, String label, IconData icon) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: isDark ? Colors.white : Colors.grey[100],
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: Colors.green[600], size: 28),
         ),
         const SizedBox(height: 8),
-        Text(label, style: TextStyle(color: Colors.grey[700], fontSize: 14)),
+        Text(
+          label,
+          style: TextStyle(
+            color: theme.textTheme.bodyMedium?.color,
+            fontSize: 14,
+          ),
+        ),
       ],
     );
   }
 
 
-  Widget _buildRecentTransactions() {
+  Widget _buildRecentTransactions(BuildContext context) {
+    final textColor = Theme.of(context).textTheme.titleLarge?.color;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Transacciones Recientes',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
           ),
           const SizedBox(height: 16),
           _buildTransactionItem('Supermercado', 'S/85.50', Icons.shopping_cart, Colors.red),

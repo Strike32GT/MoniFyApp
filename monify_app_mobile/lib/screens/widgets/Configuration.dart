@@ -1,350 +1,703 @@
 import 'package:flutter/material.dart';
+import 'package:monify_app_mobile/navigation/app_routes.dart';
+import 'package:monify_app_mobile/themes/dark_theme.dart';
+import 'package:monify_app_mobile/themes/theme_controller.dart';
 
 class ConfigurationPage extends StatefulWidget {
   final String userName;
   final String userEmail;
-  const ConfigurationPage({Key? key, required this.userName, required this.userEmail}) : super(key: key);
+
+  const ConfigurationPage({
+    Key? key,
+    required this.userName,
+    required this.userEmail,
+  }) : super(key: key);
 
   @override
   State<ConfigurationPage> createState() => _ConfigurationPageState();
 }
 
-
 class _ConfigurationPageState extends State<ConfigurationPage> {
   bool _notificationEnabled = true;
   bool _biometricEnabled = false;
-  bool _darkModeEnabled = false;
-  String _selectedLanguage = 'Español';
+  late bool _darkModeEnabled;
+  bool _isEditingBudget = false;
+  double _dailyBudget = 50.0;
+  late final TextEditingController _budgetController;
 
+  final List<double> _quickBudgetOptions = [30, 50, 80, 100, 150];
+
+  @override
+  void initState() {
+    super.initState();
+    _darkModeEnabled = ThemeController.instance.isDarkMode;
+    _budgetController = TextEditingController(
+      text: _dailyBudget.toStringAsFixed(0),
+    );
+  }
+
+  @override
+  void dispose() {
+    _budgetController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.green[600],
+        backgroundColor: theme.brightness == Brightness.dark
+            ? theme.scaffoldBackgroundColor
+            : Colors.green[600],
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: IconButton(
+            style: IconButton.styleFrom(
+              backgroundColor: theme.brightness == Brightness.dark
+                  ? DarkTheme.surface
+                  : Colors.transparent,
+            ),
+            icon: Icon(
+              Icons.arrow_back,
+              color: theme.brightness == Brightness.dark
+                  ? theme.colorScheme.onSurface
+                  : Colors.white,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
-        title: const Text(
-          'Configuracion',
+        title: Text(
+          'Configuración',
           style: TextStyle(
-            color: Colors.white,
+            color: theme.brightness == Brightness.dark
+                ? theme.colorScheme.onSurface
+                : Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
-        ), 
+        ),
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 28),
         child: Column(
           children: [
-            _buildProfileSection(),
+            _buildProfileSection(context),
             const SizedBox(height: 20),
-            _buildSettingSection(),
+            _buildBudgetSection(context),
             const SizedBox(height: 20),
-            _buildSecuritySection(),
+            _buildSettingSection(context),
             const SizedBox(height: 20),
-            _buildAboutSection(),
+            _buildSecuritySection(context),
             const SizedBox(height: 20),
-            _buildLogoutButton(),
+            _buildAboutSection(context),
+            const SizedBox(height: 20),
+            _buildLogoutButton(context),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildProfileSection(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-  Widget _buildProfileSection() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.green[600],
-        borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: isDark ? DarkTheme.surface : theme.cardColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: theme.dividerColor),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(isDark ? 0.16 : 0.08),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'MI PERFIL',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.green[600],
+                  child: Text(
+                    widget.userName.isNotEmpty ? widget.userName[0].toUpperCase() : 'U',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.userName,
+                        style: theme.textTheme.titleMedium?.copyWith(fontSize: 16),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        widget.userEmail,
+                        style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
+                      ),
+                    ],
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  style: TextButton.styleFrom(
+                    backgroundColor: isDark ? const Color(0xFF16233B) : Colors.green[50],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: Text(
+                    'Editar',
+                    style: TextStyle(
+                      color: isDark ? theme.colorScheme.primary : Colors.green[700],
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.green[400],
-                child: Text(
-                  widget.userName.isNotEmpty ? widget.userName[0].toUpperCase() : 'U',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.green[600]!, width: 2),
-                  ),
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: Colors.green[600]!,
-                    size: 20,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            widget.userName,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            widget.userEmail,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'Nivel4',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
     );
   }
 
+  Widget _buildBudgetSection(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final sectionColor = theme.textTheme.bodyMedium?.color;
 
-
-
-  Widget _buildSettingSection() {
-    return Padding(
-      padding: const EdgeInsetsGeometry.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Configuracion general',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildSettingItem(
-            icon: Icons.language,
-            title: 'Idioma',
-            subtitle: _selectedLanguage,
-            onTap: () => _showLanguageDialog(),
-          ),
-          _buildSettingItem(
-            icon: Icons.notifications,
-            title: 'Notificaciones',
-            subtitle: _notificationEnabled ? 'Activate' : 'Desactivate',
-            trailing: Switch(
-              value: _notificationEnabled,
-              onChanged: (value) {
-                setState(() {
-                  _notificationEnabled = value;
-                });
-              },
-              activeColor: Colors.green[600],
-            ),
-          ),
-          _buildSettingItem(
-            icon: Icons.dark_mode,
-            title: 'Modo oscuro',
-            subtitle: _darkModeEnabled ? 'Activate' : 'Desactivate',
-            trailing: Switch(
-              value: _darkModeEnabled,
-              onChanged: (value) {
-                setState(() {
-                  _darkModeEnabled = value;
-                });
-              },
-              activeColor: Colors.green[600],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-
-  Widget _buildSecuritySection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Seguridad',
-            style: TextStyle(
-              fontSize: 18,
+          Text(
+            'PRESUPUESTO',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              letterSpacing: 1,
+              color: sectionColor,
             ),
           ),
-          const SizedBox(height: 16),
-          _buildSettingItem(
-            icon: Icons.fingerprint,
-            title: 'Autenticacion',
-            subtitle: _biometricEnabled ? 'Activate' : 'Desactivate',
-            trailing: Switch(
-              value: _biometricEnabled, 
-              onChanged: (value) {
-                setState(() {
-                  _biometricEnabled = value;
-                });
-              },
-              activeColor: Colors.green[600],
-              ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: isDark ? DarkTheme.surface : theme.cardColor,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: theme.dividerColor),
             ),
-            _buildSettingItem(
-              icon: Icons.security, 
-              title: 'Privacidad', 
-              subtitle: 'Configuracion',
-              onTap: () {},
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF203A24)
+                            : Colors.green[50],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.attach_money,
+                        color: Colors.green[600],
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Presupuesto diario',
+                            style: theme.textTheme.titleMedium?.copyWith(fontSize: 16),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Cuánto puedes gastar por día',
+                            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: _toggleBudgetEditor,
+                      style: TextButton.styleFrom(
+                        backgroundColor: isDark
+                            ? const Color(0xFF2B3E35)
+                            : Colors.green[50],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: Text(
+                        _isEditingBudget ? 'Cancelar' : 'Editar',
+                        style: TextStyle(
+                          color: isDark ? theme.colorScheme.primary : Colors.green[700],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                if (_isEditingBudget) ...[
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _budgetController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          decoration: InputDecoration(
+                            prefixText: 'S/  ',
+                            hintText: '145',
+                            filled: true,
+                            fillColor: isDark ? DarkTheme.surfaceSoft : Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.green[600]!),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: Colors.green[600]!,
+                                width: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      SizedBox(
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: _saveBudget,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green[600],
+                            foregroundColor: isDark ? DarkTheme.background : Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 22),
+                          ),
+                          child: const Text(
+                            'Guardar',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: _quickBudgetOptions.map((amount) {
+                      final isSelected =
+                          _budgetController.text.trim() == amount.toStringAsFixed(0);
+
+                      return InkWell(
+                        onTap: () => _applyQuickBudget(amount),
+                        borderRadius: BorderRadius.circular(18),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? (isDark ? const Color(0xFF203A24) : Colors.green[50])
+                                : (isDark ? DarkTheme.surfaceSoft : Colors.grey[100]),
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: isSelected
+                                  ? Colors.green[600]!
+                                  : theme.dividerColor,
+                            ),
+                          ),
+                          child: Text(
+                            'S/ ${amount.toStringAsFixed(0)}',
+                            style: TextStyle(
+                              color: isSelected
+                                  ? (isDark ? theme.colorScheme.primary : Colors.green[700])
+                                  : theme.textTheme.bodyMedium?.color,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ] else ...[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'S/ ${_dailyBudget.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontSize: 38,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green[600],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Text(
+                          '/ día',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
+  void _toggleBudgetEditor() {
+    setState(() {
+      _isEditingBudget = !_isEditingBudget;
+      _budgetController.text = _dailyBudget.toStringAsFixed(0);
+    });
+  }
 
+  void _applyQuickBudget(double amount) {
+    setState(() {
+      _budgetController.text = amount.toStringAsFixed(0);
+    });
+  }
 
+  void _saveBudget() {
+    final rawValue = _budgetController.text.trim().replaceAll(',', '.');
+    final parsedValue = double.tryParse(rawValue);
 
-  Widget _buildAboutSection() {
+    if (parsedValue == null || parsedValue <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Ingresa un presupuesto diario válido'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _dailyBudget = parsedValue;
+      _isEditingBudget = false;
+      _budgetController.text = parsedValue.toStringAsFixed(0);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Presupuesto diario actualizado'),
+      ),
+    );
+  }
+
+  Widget _buildSettingSection(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
-      padding: const EdgeInsetsGeometry.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Acerca de',
-            style: TextStyle(
-              fontSize: 18,
+          Text(
+            'PREFERENCIAS',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              letterSpacing: 1,
             ),
           ),
-          const SizedBox(height: 16),
-          _buildSettingItem(
-            icon: Icons.info,
-            title: 'Version',
-            subtitle: '1.0.0',
-            onTap: null,
+          const SizedBox(height: 12),
+          Container(
+            decoration: BoxDecoration(
+              color: theme.cardColor,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: theme.dividerColor),
+            ),
+            child: Column(
+              children: [
+                _buildSettingItem(
+                  context: context,
+                  icon: Icons.notifications_outlined,
+                  title: 'Notificaciones',
+                  subtitle: 'Recibirás alertas de gastos',
+                  trailing: Switch(
+                    value: _notificationEnabled,
+                    onChanged: (value) {
+                      setState(() {
+                        _notificationEnabled = value;
+                      });
+                    },
+                  ),
+                  removeBottomMargin: true,
+                  useInsideGroupStyle: true,
+                ),
+                Divider(height: 1, color: theme.dividerColor),
+                _buildSettingItem(
+                  context: context,
+                  icon: Icons.dark_mode_outlined,
+                  title: 'Modo oscuro',
+                  subtitle: _darkModeEnabled ? 'Tema oscuro activado' : 'Usando tema claro',
+                  trailing: Switch(
+                    value: _darkModeEnabled,
+                    onChanged: (value) {
+                      setState(() {
+                        _darkModeEnabled = value;
+                      });
+                      ThemeController.instance.toggleTheme(value);
+                    },
+                  ),
+                  removeBottomMargin: true,
+                  useInsideGroupStyle: true,
+                ),
+              ],
+            ),
           ),
-          _buildSettingItem(
-            icon: Icons.help,
-            title: 'Ayuda y Soporte',
-            subtitle: 'Obten ayuda',
-            onTap: () {},
-          ),
-          _buildSettingItem(
-            icon: Icons.rate_review,
-            title: 'Calificar App',
-            subtitle: 'Dame tu opinion',
-            onTap: () {},
-          )
         ],
       ),
     );
   }
 
+  Widget _buildSecuritySection(BuildContext context) {
+    final theme = Theme.of(context);
 
-  Widget _buildSettingItem({required IconData icon, required String title, required String subtitle, Widget? trailing, VoidCallback? onTap,}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'MÁS OPCIONES',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            decoration: BoxDecoration(
+              color: theme.cardColor,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: theme.dividerColor),
+            ),
+            child: Column(
+              children: [
+                _buildSettingItem(
+                  context: context,
+                  icon: Icons.security_outlined,
+                  title: 'Privacidad y seguridad',
+                  subtitle: 'Gestiona tus datos',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: theme.textTheme.bodyMedium?.color,
+                  ),
+                  onTap: () {},
+                  removeBottomMargin: true,
+                  useInsideGroupStyle: true,
+                ),
+                Divider(height: 1, color: theme.dividerColor),
+                _buildSettingItem(
+                  context: context,
+                  icon: Icons.help_outline,
+                  title: 'Ayuda y soporte',
+                  subtitle: 'Centro de ayuda',
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: theme.textTheme.bodyMedium?.color,
+                  ),
+                  onTap: () {},
+                  removeBottomMargin: true,
+                  useInsideGroupStyle: true,
+                ),
+                Divider(height: 1, color: theme.dividerColor),
+                _buildSettingItem(
+                  context: context,
+                  icon: Icons.fingerprint,
+                  title: 'Autenticación',
+                  subtitle: _biometricEnabled ? 'Activada' : 'Desactivada',
+                  trailing: Switch(
+                    value: _biometricEnabled,
+                    onChanged: (value) {
+                      setState(() {
+                        _biometricEnabled = value;
+                      });
+                    },
+                  ),
+                  removeBottomMargin: true,
+                  useInsideGroupStyle: true,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAboutSection(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'ACERCA DE',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: 12),
+          _buildSettingItem(
+            context: context,
+            icon: Icons.info_outline,
+            title: 'Versión',
+            subtitle: '1.0.0',
+          ),
+          _buildSettingItem(
+            context: context,
+            icon: Icons.rate_review_outlined,
+            title: 'Calificar App',
+            subtitle: 'Danos tu opinión',
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingItem({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    Widget? trailing,
+    VoidCallback? onTap,
+    bool removeBottomMargin = false,
+    bool useInsideGroupStyle = false,
+  }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final content = ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      leading: Container(
+        width: 42,
+        height: 42,
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF16233B) : Colors.green[50],
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          color: isDark ? theme.colorScheme.primary : Colors.green[600],
+          size: 22,
+        ),
+      ),
+      title: Text(
+        title,
+        style: theme.textTheme.titleMedium?.copyWith(fontSize: 16),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
+      ),
+      trailing: trailing,
+      onTap: onTap,
+    );
+
+    if (useInsideGroupStyle) {
+      return content;
+    }
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: removeBottomMargin ? 0 : 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 5,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(isDark ? 0.12 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: ListTile(
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.green[50],
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            icon,
-            color: Colors.green[600],
-            size: 24,
-          ),
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
-        ),
-        trailing: trailing,
-        onTap: onTap,
-      ),
+      child: content,
     );
   }
 
-
-
-  Widget _buildLogoutButton() {
+  Widget _buildLogoutButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: SizedBox(
         width: double.infinity,
-        height: 50,
+        height: 52,
         child: ElevatedButton(
-          onPressed: () => _showLogoutDialog(),
+          onPressed: _showLogoutDialog,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red[600],
+            foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
             ),
           ),
           child: const Text(
-            'Cerrar Sesion',
+            'Cerrar Sesión',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
             ),
           ),
         ),
@@ -352,72 +705,102 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
     );
   }
 
+  
 
+  void _showLogoutDialog() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-  void _showLanguageDialog() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Seleccionar Idioma'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildLanguageOption('Espanol'),
-              _buildLanguageOption('English'),
-              _buildLanguageOption('Portugues'),
-            ],
+      barrierDismissible: true,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: theme.cardColor,
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: theme.dividerColor),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.24 : 0.12),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF3A2225) : Colors.red[50],
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.logout_rounded,
+                    color: Colors.red[600],
+                    size: 30,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Cerrar Sesión',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Estás a punto de salir de tu cuenta. ¿Deseas continuar?',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 15,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                        },
+                        child: const Text('Cancelar'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            AppRoutes.login,
+                            (route) => false,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red[600],
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Salir'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
-    );
-  }
-
-
-
-
-  Widget _buildLanguageOption(String language) {
-    return RadioListTile<String>(
-      title: Text(language),
-      value: language,
-      groupValue: _selectedLanguage,
-      onChanged: (value) {
-        setState(() {
-          _selectedLanguage = value!;
-        });
-        Navigator.pop(context);
-      },
-      activeColor: Colors.green[600],
-    );
-  }
-
-
-
-  void _showLogoutDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Cerrar Sesion'),
-          content: const Text('Estas seguro?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-              child: const Text(
-                'Cerrar sesion',
-                style: TextStyle(color: Colors.red),
-              ),
-            ),
-          ],
-        );
-      }
     );
   }
 }

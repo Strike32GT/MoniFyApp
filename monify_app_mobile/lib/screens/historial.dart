@@ -1,59 +1,65 @@
 import 'package:flutter/material.dart';
+import 'package:monify_app_mobile/themes/dark_theme.dart';
+import 'package:monify_app_mobile/themes/normal_theme.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({Key? key}) : super(key: key);
 
-  @override 
+  @override
   State<HistoryPage> createState() => _HistoryPageState();
 }
-
 
 class _HistoryPageState extends State<HistoryPage> {
   int _selectedFilter = 0;
 
-  @override 
+  @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
-            _buildSearchBar(),
+            _buildHeader(context),
+            _buildSearchBar(context),
             const SizedBox(height: 16),
-            _buildFilterButtons(),
+            _buildFilterButtons(context),
             const SizedBox(height: 20),
-            _buildDailySummary(),
-            const SizedBox(height: 10),
-            _buildTransactionList(),
+            _buildDailySummary(context),
+            const SizedBox(height: 16),
+            _buildTransactionList(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
-      padding: const EdgeInsets.only(top: 60.0, left: 20.0, right: 20.0, bottom: 20.0),
+      padding: const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Registro Completo',
-            style: TextStyle(
-              color: Colors.grey[600],
+            'Registro completo',
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 12,
               fontWeight: FontWeight.bold,
+              letterSpacing: 1,
             ),
           ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Historial',
-                style: TextStyle(
+                style: theme.textTheme.headlineMedium?.copyWith(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
@@ -63,13 +69,10 @@ class _HistoryPageState extends State<HistoryPage> {
                 children: [
                   Text(
                     'Total (hoy)',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
-                    ),
+                    style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
                   ),
                   const Text(
-                    '-S/35.50', 
+                    '-S/35.50',
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 18,
@@ -77,51 +80,48 @@ class _HistoryPageState extends State<HistoryPage> {
                     ),
                   ),
                 ],
-              )
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: TextField(
         decoration: InputDecoration(
-          hintText: 'Buscar gastos ...',
-          prefixIcon: const Icon(Icons.search, color: Colors.grey),
-          border: OutlineInputBorder(
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+          hintText: 'Buscar gastos...',
+          prefixIcon: Icon(Icons.search, color: theme.textTheme.bodyMedium?.color),
         ),
       ),
     );
   }
 
-
-  Widget _buildFilterButtons() {
+  Widget _buildFilterButtons(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          _buildFilterButton('Hoy',0),
+          _buildFilterButton(context, 'Hoy', 0),
           const SizedBox(width: 10),
-          _buildFilterButton('Semana', 1),
+          _buildFilterButton(context, 'Semana', 1),
           const SizedBox(width: 10),
-          _buildFilterButton('Mes',2),
+          _buildFilterButton(context, 'Mes', 2),
         ],
       ),
     );
   }
 
+  Widget _buildFilterButton(BuildContext context, String text, int index) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isSelected = _selectedFilter == index;
 
-  Widget _buildFilterButton(String text, int index) {
-    bool isSelected = _selectedFilter == index;
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -129,21 +129,28 @@ class _HistoryPageState extends State<HistoryPage> {
             _selectedFilter = index;
           });
         },
-        child: Container(
-          height: 40,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          height: 42,
           decoration: BoxDecoration(
-            color: isSelected ? Colors.green[600] : Colors.white,
-            borderRadius: BorderRadius.circular(10),
+            color: isSelected
+                ? theme.colorScheme.primary
+                : (isDark ? DarkTheme.surface : Colors.white),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: isSelected ? Colors.green[600]! : Colors.grey[300]!,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : (isDark ? DarkTheme.border : NormalTheme.border),
             ),
           ),
           child: Center(
             child: Text(
               text,
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.grey[600],
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected
+                    ? (isDark ? DarkTheme.background : Colors.white)
+                    : theme.textTheme.bodyMedium?.color,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
               ),
             ),
           ),
@@ -152,39 +159,43 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
+  Widget _buildDailySummary(BuildContext context) {
+    final theme = Theme.of(context);
 
-
-  Widget _buildDailySummary() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildSummaryItem('Gastos', 'S/35.50', Colors.red),
-              _buildSummaryItem('Ingresos', 'S/0.00', Colors.green),
-              _buildSummaryItem('Balance', 'S/35.50', Colors.grey[700]!),
-            ],
-          ),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: theme.dividerColor),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildSummaryItem(context, 'Gastos', 'S/35.50', Colors.red),
+            _buildSummaryItem(context, 'Ingresos', 'S/0.00', Colors.green),
+            _buildSummaryItem(
+              context,
+              'Balance',
+              'S/35.50',
+              theme.textTheme.titleLarge?.color ?? Colors.grey[700]!,
+            ),
+          ],
         ),
       ),
     );
   }
 
+  Widget _buildSummaryItem(BuildContext context, String label, String amount, Color color) {
+    final theme = Theme.of(context);
 
-  Widget _buildSummaryItem(String label, String amount, Color color) {
     return Column(
       children: [
         Text(
           label,
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 12,
-          ),
+          style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
         ),
         const SizedBox(height: 4),
         Text(
@@ -194,82 +205,191 @@ class _HistoryPageState extends State<HistoryPage> {
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
-        )
+        ),
       ],
     );
   }
 
+  Widget _buildTransactionList(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-  Widget _buildTransactionList() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Transacciones',
-            style: TextStyle(
+            style: theme.textTheme.titleLarge?.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
-          _buildTransactionGroup('Ayer', [
-            _buildTransactionItem('Uber', 'S/15.50', Icons.directions_car, Colors.red, '14:30'),
-            _buildTransactionItem('Almuerzo', 'S/20.00', Icons.restaurant, Colors.red, '12:15'),
-          ]),
+          _buildTransactionGroup(
+            context,
+            'Hoy',
+            [
+              _buildTransactionItem(
+                context,
+                'Almuerzo restaurante',
+                '-S/18.50',
+                Icons.lunch_dining,
+                Colors.red,
+                '13:20',
+                'Comida',
+                Colors.redAccent,
+              ),
+              _buildTransactionItem(
+                context,
+                'Bus linea 3',
+                '-S/5.00',
+                Icons.directions_bus,
+                Colors.red,
+                '08:15',
+                'Transporte',
+                Colors.green,
+              ),
+              _buildTransactionItem(
+                context,
+                'Snacks tienda',
+                '-S/12.00',
+                Icons.shopping_bag,
+                Colors.red,
+                '10:30',
+                'Compras',
+                Colors.purpleAccent,
+              ),
+            ],
+            isDark,
+          ),
           const SizedBox(height: 20),
-          _buildTransactionGroup('Ayer', [
-            _buildTransactionItem('Supermercado','S/85.50',Icons.shopping_cart, Colors.red, '18.45'),
-            _buildTransactionItem('Salario','S/500.00',Icons.work, Colors.green, '09.00'),
-          ]),
-          const SizedBox(height: 20),
-          _buildTransactionGroup('Lunes', [
-            _buildTransactionItem('Transporte', 'S/8.00', Icons.directions_bus, Colors.red, '19.20'),
-          ]),
+          _buildTransactionGroup(
+            context,
+            'Ayer',
+            [
+              _buildTransactionItem(
+                context,
+                'Supermercado',
+                'S/85.50',
+                Icons.shopping_cart,
+                Colors.red,
+                '18:45',
+                null,
+                null,
+              ),
+              _buildTransactionItem(
+                context,
+                'Salario',
+                'S/500.00',
+                Icons.work,
+                Colors.green,
+                '09:00',
+                null,
+                null,
+              ),
+            ],
+            false,
+          ),
         ],
       ),
     );
   }
 
+  Widget _buildTransactionGroup(
+    BuildContext context,
+    String date,
+    List<Widget> transactions,
+    bool groupedCard,
+  ) {
+    final theme = Theme.of(context);
 
-  Widget _buildTransactionGroup(String date, List<Widget> transactions) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           date,
-          style: TextStyle(
-            color: Colors.grey[600],
+          style: theme.textTheme.bodyMedium?.copyWith(
             fontSize: 14,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
         const SizedBox(height: 8),
+        if (groupedCard)
+          Container(
+            decoration: BoxDecoration(
+              color: theme.cardColor,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: theme.dividerColor),
+            ),
+            child: Column(children: transactions),
+          )
+        else
           ...transactions,
       ],
     );
   }
 
+  Widget _buildTransactionItem(
+    BuildContext context,
+    String title,
+    String amount,
+    IconData icon,
+    Color color,
+    String time,
+    String? badgeLabel,
+    Color? badgeColor,
+  ) {
+    final theme = Theme.of(context);
+    final isExpense = amount.startsWith('-') || color == Colors.red;
 
-  Widget _buildTransactionItem(String title, String amount, IconData icon, Color color, String time) {
     return ListTile(
-      contentPadding: EdgeInsets.zero,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withOpacity(0.14),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: color, size: 20),
+        child: Icon(icon, color: color, size: 22),
       ),
-      title: Text(title),
-      subtitle: Text(time),
+      title: Text(
+        title,
+        style: theme.textTheme.titleMedium?.copyWith(fontSize: 16),
+      ),
+      subtitle: Row(
+        children: [
+          if (badgeLabel != null && badgeColor != null) ...[
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: badgeColor.withOpacity(0.18),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                badgeLabel,
+                style: TextStyle(
+                  color: badgeColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Text(
+            time,
+            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
+          ),
+        ],
+      ),
       trailing: Text(
         amount,
         style: TextStyle(
-          color: color, 
+          color: isExpense ? Colors.red : Colors.green,
           fontWeight: FontWeight.bold,
+          fontSize: 16,
         ),
       ),
     );
