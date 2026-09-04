@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:monify_app_mobile/screens/Estadistic.dart';
 import 'package:monify_app_mobile/screens/historial.dart';
 import 'package:monify_app_mobile/screens/perfil.dart';
 import 'package:monify_app_mobile/screens/widgets/Notifications.dart';
 import 'package:monify_app_mobile/screens/widgets/add_expense_modal.dart';
-import 'package:monify_app_mobile/themes/dark_theme.dart';
 import 'package:monify_app_mobile/themes/normal_theme.dart';
 
 class Home extends StatefulWidget {
@@ -40,59 +40,50 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: Container(
-        height: 80,
-        decoration: BoxDecoration(
-          color: isDark ? DarkTheme.surface : Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.28 : 0.1),
-              blurRadius: isDark ? 18 : 10,
-              offset: const Offset(0.0, -2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(
-              0,
-              Icons.home_outlined,
-              'Inicio',
-              colorScheme,
-              isDark,
-            ),
-            _buildNavItem(
-              1,
-              Icons.bar_chart_outlined,
-              'Estadistica',
-              colorScheme,
-              isDark,
-            ),
-            //_buildAddButton(),
-            Transform.translate(
-              offset: const Offset(0.0, -20.0),
-              child: _buildAddButton(colorScheme),
-            ),
-            _buildNavItem(
-              2,
-              Icons.history_outlined,
-              'Historial',
-              colorScheme,
-              isDark,
-            ),
-            _buildNavItem(
-              3,
-              Icons.person_outline,
-              'Perfil',
-              colorScheme,
-              isDark,
-            ),
-          ],
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: NormalTheme.primaryGreen,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        body: _pages[_currentIndex],
+        bottomNavigationBar: Container(
+          height: 88,
+          decoration: BoxDecoration(
+            color: NormalTheme.surface,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0.0, -2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(0, Icons.home_outlined, 'Inicio', colorScheme),
+              _buildNavItem(
+                1,
+                Icons.bar_chart_outlined,
+                'Estadistica',
+                colorScheme,
+              ),
+              //_buildAddButton(),
+              Transform.translate(
+                offset: const Offset(0.0, -26.0),
+                child: _buildAddButton(colorScheme),
+              ),
+              _buildNavItem(
+                2,
+                Icons.history_outlined,
+                'Historial',
+                colorScheme,
+              ),
+              _buildNavItem(3, Icons.person_outline, 'Perfil', colorScheme),
+            ],
+          ),
         ),
       ),
     );
@@ -103,11 +94,10 @@ class _HomeState extends State<Home> {
     IconData icon,
     String label,
     ColorScheme colorScheme,
-    bool isDark,
   ) {
     final isActive = _currentIndex == index;
     final activeColor = colorScheme.primary;
-    final inactiveColor = isDark ? DarkTheme.textSecondary : Colors.grey[600]!;
+    final inactiveColor = NormalTheme.textSecondary;
 
     return GestureDetector(
       onTap: () {
@@ -116,19 +106,19 @@ class _HomeState extends State<Home> {
         });
       },
       child: SizedBox(
-        width: 60,
-        height: 60,
+        width: 72,
+        height: 72,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 22, color: isActive ? activeColor : inactiveColor),
-            const SizedBox(height: 4),
+            Icon(icon, size: 28, color: isActive ? activeColor : inactiveColor),
+            const SizedBox(height: 5),
             Text(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 9,
+                fontSize: 11,
                 color: isActive ? activeColor : inactiveColor,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
               ),
@@ -143,8 +133,8 @@ class _HomeState extends State<Home> {
     return GestureDetector(
       onTap: _openAddExpenseModal,
       child: Container(
-        width: 56,
-        height: 56,
+        width: 64,
+        height: 64,
         decoration: BoxDecoration(
           color: colorScheme.primary,
           shape: BoxShape.circle,
@@ -162,7 +152,7 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        child: Icon(Icons.add, size: 28, color: Colors.white),
+        child: Icon(Icons.add, size: 32, color: Colors.white),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monify_app_mobile/screens/widgets/expense_keypad.dart';
+import 'package:monify_app_mobile/themes/normal_theme.dart';
 
 class AddExpenseModal extends StatefulWidget {
   const AddExpenseModal({Key? key}) : super(key: key);
@@ -10,7 +11,7 @@ class AddExpenseModal extends StatefulWidget {
 
 class _AddExpenseModalState extends State<AddExpenseModal> {
   String _amount = '0.00';
-  String _selectedCategory = 'Comida';
+  String _selectedCategory = '';
   final TextEditingController _descriptionController = TextEditingController();
 
   final List<Map<String, dynamic>> _categories = [
@@ -72,6 +73,9 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
       ),
     );
   }
+
+  bool get _canSave =>
+      _selectedCategory.isNotEmpty && (double.tryParse(_amount) ?? 0) > 0;
 
   @override
   void dispose() {
@@ -251,9 +255,14 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
               width: double.infinity,
               height: 54,
               child: ElevatedButton(
-                onPressed: _saveExpense,
+                onPressed: _canSave ? _saveExpense : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueGrey[100],
+                  backgroundColor: _canSave
+                      ? NormalTheme.primaryGreen
+                      : NormalTheme.border,
+                  foregroundColor: _canSave
+                      ? Colors.white
+                      : NormalTheme.textSecondary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18),

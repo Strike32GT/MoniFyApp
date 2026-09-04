@@ -18,7 +18,6 @@ class ConfigurationPage extends StatefulWidget {
 
 class _ConfigurationPageState extends State<ConfigurationPage> {
   bool _notificationEnabled = true;
-  bool _biometricEnabled = false;
   bool _isEditingBudget = false;
   double _dailyBudget = 50.0;
   late final TextEditingController _budgetController;
@@ -82,8 +81,6 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
         padding: const EdgeInsets.only(bottom: 28),
         child: Column(
           children: [
-            _buildProfileSection(context),
-            const SizedBox(height: 20),
             _buildBudgetSection(context),
             const SizedBox(height: 20),
             _buildSettingSection(context),
@@ -535,20 +532,6 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
               children: [
                 _buildSettingItem(
                   context: context,
-                  icon: Icons.security_outlined,
-                  title: 'Privacidad y seguridad',
-                  subtitle: 'Gestiona tus datos',
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: theme.textTheme.bodyMedium?.color,
-                  ),
-                  onTap: () {},
-                  removeBottomMargin: true,
-                  useInsideGroupStyle: true,
-                ),
-                Divider(height: 1, color: theme.dividerColor),
-                _buildSettingItem(
-                  context: context,
                   icon: Icons.help_outline,
                   title: 'Ayuda y soporte',
                   subtitle: 'Centro de ayuda',
@@ -557,23 +540,6 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                     color: theme.textTheme.bodyMedium?.color,
                   ),
                   onTap: () {},
-                  removeBottomMargin: true,
-                  useInsideGroupStyle: true,
-                ),
-                Divider(height: 1, color: theme.dividerColor),
-                _buildSettingItem(
-                  context: context,
-                  icon: Icons.fingerprint,
-                  title: 'Autenticación',
-                  subtitle: _biometricEnabled ? 'Activada' : 'Desactivada',
-                  trailing: Switch(
-                    value: _biometricEnabled,
-                    onChanged: (value) {
-                      setState(() {
-                        _biometricEnabled = value;
-                      });
-                    },
-                  ),
                   removeBottomMargin: true,
                   useInsideGroupStyle: true,
                 ),

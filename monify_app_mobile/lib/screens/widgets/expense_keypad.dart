@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:monify_app_mobile/themes/normal_theme.dart';
 
 class ExpenseKeypad extends StatelessWidget {
   final String value;
@@ -80,8 +81,8 @@ class ExpenseKeypad extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey[101],
-          foregroundColor: Colors.black87,
+          backgroundColor: const Color(0xFFF0F2F1),
+          foregroundColor: NormalTheme.textPrimary,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
@@ -101,8 +102,8 @@ class ExpenseKeypad extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onBackspace,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFFE5E5),
-          foregroundColor: Colors.redAccent,
+          backgroundColor: NormalTheme.dangerSoft,
+          foregroundColor: NormalTheme.danger,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),

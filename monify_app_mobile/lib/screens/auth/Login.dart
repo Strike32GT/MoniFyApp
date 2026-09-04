@@ -37,7 +37,6 @@ class _LoginPageState extends State<LoginPage> {
     padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
     child: Column(
       children: [
-        const Align(alignment: Alignment.centerLeft, child: _BrandName()),
         const SizedBox(height: 28),
         Image.asset(
           'assets/Monify_Logo_Recortado.png',
@@ -46,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         const SizedBox(height: 12),
         const Text(
-          'Tus finanzas,\nmás felices.',
+          'Monify',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 32,
@@ -139,7 +138,6 @@ class _LoginPageState extends State<LoginPage> {
           tooltip: 'Volver',
         ),
         const SizedBox(height: 16),
-        const _BrandName(),
         const SizedBox(height: 28),
         const Text(
           'Hola de nuevo',
@@ -251,26 +249,6 @@ class _LoginPageState extends State<LoginPage> {
     _passwordController.dispose();
     super.dispose();
   }
-}
-
-class _BrandName extends StatelessWidget {
-  const _BrandName();
-  @override
-  Widget build(BuildContext context) => const Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(Icons.savings_rounded, color: NormalTheme.primaryGreen, size: 28),
-      SizedBox(width: 8),
-      Text(
-        'Monify',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w800,
-          color: NormalTheme.primaryGreenDark,
-        ),
-      ),
-    ],
-  );
 }
 
 class _AuthField extends StatelessWidget {
