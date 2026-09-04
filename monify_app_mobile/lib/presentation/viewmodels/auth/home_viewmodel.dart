@@ -7,10 +7,7 @@ class HomeViewModel extends ChangeNotifier {
   final GetTransactionsUsecase _getTransactionsUsecase;
   final TransactionRepository _transactionRepository;
 
-  HomeViewModel(
-    this._getTransactionsUsecase,
-    this._transactionRepository,
-  );
+  HomeViewModel(this._getTransactionsUsecase, this._transactionRepository);
 
   bool _isLoading = false;
   String? _errorMessage;

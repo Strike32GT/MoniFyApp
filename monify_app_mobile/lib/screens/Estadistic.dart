@@ -137,7 +137,7 @@ class _EstadisticPageState extends State<EstadisticPage> {
               'S/ 319.50',
               '7 dias registrados',
               Icons.account_balance_wallet,
-              Colors.green[600]!,
+              NormalTheme.primaryGreen,
             ),
           ),
           const SizedBox(width: 16),
@@ -148,7 +148,7 @@ class _EstadisticPageState extends State<EstadisticPage> {
               'S/ 45.64',
               'Limite: S/50.00',
               Icons.trending_up,
-              Colors.blue[600]!,
+              NormalTheme.gold,
             ),
           ),
         ],
@@ -174,7 +174,9 @@ class _EstadisticPageState extends State<EstadisticPage> {
         border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(theme.brightness == Brightness.dark ? 0.12 : 0.05),
+            color: Colors.black.withOpacity(
+              theme.brightness == Brightness.dark ? 0.12 : 0.05,
+            ),
             blurRadius: 14,
             offset: const Offset(0, 5),
           ),
@@ -194,7 +196,10 @@ class _EstadisticPageState extends State<EstadisticPage> {
                 child: Icon(icon, color: color, size: 20),
               ),
               const Spacer(),
-              Icon(Icons.more_vert, color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7)),
+              Icon(
+                Icons.more_vert,
+                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -243,7 +248,11 @@ class _EstadisticPageState extends State<EstadisticPage> {
                 color: Colors.orange.withOpacity(0.16),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.emoji_events, color: Colors.orange[600], size: 20),
+              child: Icon(
+                Icons.emoji_events,
+                color: Colors.orange[600],
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -287,7 +296,10 @@ class _EstadisticPageState extends State<EstadisticPage> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.green.withOpacity(0.14),
                   borderRadius: BorderRadius.circular(14),
@@ -338,19 +350,24 @@ class _EstadisticPageState extends State<EstadisticPage> {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildBar(context, 'Lun', 28.0, Colors.green[600]!),
-          _buildBar(context, 'Mar', 55.0, Colors.green[600]!),
-          _buildBar(context, 'Mie', 36.0, Colors.green[600]!),
-          _buildBar(context, 'Jue', 62.0, Colors.red[600]!),
-          _buildBar(context, 'Vie', 44.0, Colors.yellow[700]!),
-          _buildBar(context, 'Sab', 54.0, Colors.green[600]!),
-          _buildBar(context, 'Dom', 34.0, Colors.green[600]!),
+          _buildBar(context, 'Lun', 28.0, NormalTheme.primaryGreen),
+          _buildBar(context, 'Mar', 55.0, NormalTheme.lime),
+          _buildBar(context, 'Mie', 36.0, NormalTheme.primaryGreen),
+          _buildBar(context, 'Jue', 62.0, NormalTheme.danger),
+          _buildBar(context, 'Vie', 44.0, NormalTheme.gold),
+          _buildBar(context, 'Sab', 54.0, NormalTheme.lime),
+          _buildBar(context, 'Dom', 34.0, NormalTheme.primaryGreen),
         ],
       ),
     );
   }
 
-  Widget _buildBar(BuildContext context, String day, double value, Color color) {
+  Widget _buildBar(
+    BuildContext context,
+    String day,
+    double value,
+    Color color,
+  ) {
     final theme = Theme.of(context);
     const maxValue = 62.0;
 
@@ -367,10 +384,7 @@ class _EstadisticPageState extends State<EstadisticPage> {
           ),
         ),
         const SizedBox(height: 10),
-        Text(
-          day,
-          style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
-        ),
+        Text(day, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12)),
       ],
     );
   }
@@ -397,16 +411,10 @@ class _EstadisticPageState extends State<EstadisticPage> {
         Container(
           width: 12,
           height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 6),
-        Text(
-          text,
-          style: theme.textTheme.bodyMedium?.copyWith(fontSize: 11),
-        ),
+        Text(text, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 11)),
       ],
     );
   }
@@ -475,12 +483,12 @@ class _EstadisticPageState extends State<EstadisticPage> {
               shape: BoxShape.circle,
               gradient: SweepGradient(
                 colors: [
-                  Colors.green[600]!,
-                  Colors.green[600]!,
-                  Colors.blue[600]!,
-                  Colors.blue[600]!,
-                  Colors.orange[600]!,
-                  Colors.orange[600]!,
+                  NormalTheme.primaryGreen,
+                  NormalTheme.primaryGreen,
+                  NormalTheme.lime,
+                  NormalTheme.lime,
+                  NormalTheme.gold,
+                  NormalTheme.gold,
                   Colors.purple[600]!,
                   Colors.purple[600]!,
                 ],
@@ -525,14 +533,24 @@ class _EstadisticPageState extends State<EstadisticPage> {
         const SizedBox(height: 12),
         _buildCategoryItem(context, 'Transporte', 'S/ 250', Colors.blue[600]!),
         const SizedBox(height: 12),
-        _buildCategoryItem(context, 'Entretenimiento', 'S/ 312', Colors.orange[600]!),
+        _buildCategoryItem(
+          context,
+          'Entretenimiento',
+          'S/ 312',
+          Colors.orange[600]!,
+        ),
         const SizedBox(height: 12),
         _buildCategoryItem(context, 'Otros', 'S/ 313', Colors.purple[600]!),
       ],
     );
   }
 
-  Widget _buildCategoryItem(BuildContext context, String category, String amount, Color color) {
+  Widget _buildCategoryItem(
+    BuildContext context,
+    String category,
+    String amount,
+    Color color,
+  ) {
     final theme = Theme.of(context);
 
     return Row(
@@ -540,10 +558,7 @@ class _EstadisticPageState extends State<EstadisticPage> {
         Container(
           width: 12,
           height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 8),
         Expanded(

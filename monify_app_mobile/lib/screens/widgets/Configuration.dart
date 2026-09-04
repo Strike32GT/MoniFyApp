@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monify_app_mobile/navigation/app_routes.dart';
 import 'package:monify_app_mobile/themes/dark_theme.dart';
-import 'package:monify_app_mobile/themes/theme_controller.dart';
 
 class ConfigurationPage extends StatefulWidget {
   final String userName;
@@ -20,7 +19,6 @@ class ConfigurationPage extends StatefulWidget {
 class _ConfigurationPageState extends State<ConfigurationPage> {
   bool _notificationEnabled = true;
   bool _biometricEnabled = false;
-  late bool _darkModeEnabled;
   bool _isEditingBudget = false;
   double _dailyBudget = 50.0;
   late final TextEditingController _budgetController;
@@ -30,7 +28,6 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
   @override
   void initState() {
     super.initState();
-    _darkModeEnabled = ThemeController.instance.isDarkMode;
     _budgetController = TextEditingController(
       text: _dailyBudget.toStringAsFixed(0),
     );
@@ -141,7 +138,9 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                   radius: 24,
                   backgroundColor: Colors.green[600],
                   child: Text(
-                    widget.userName.isNotEmpty ? widget.userName[0].toUpperCase() : 'U',
+                    widget.userName.isNotEmpty
+                        ? widget.userName[0].toUpperCase()
+                        : 'U',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -156,12 +155,16 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                     children: [
                       Text(
                         widget.userName,
-                        style: theme.textTheme.titleMedium?.copyWith(fontSize: 16),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         widget.userEmail,
-                        style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 13,
+                        ),
                       ),
                     ],
                   ),
@@ -169,7 +172,9 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                 TextButton(
                   onPressed: () {},
                   style: TextButton.styleFrom(
-                    backgroundColor: isDark ? const Color(0xFF16233B) : Colors.green[50],
+                    backgroundColor: isDark
+                        ? const Color(0xFF16233B)
+                        : Colors.green[50],
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),
                     ),
@@ -177,7 +182,9 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                   child: Text(
                     'Editar',
                     style: TextStyle(
-                      color: isDark ? theme.colorScheme.primary : Colors.green[700],
+                      color: isDark
+                          ? theme.colorScheme.primary
+                          : Colors.green[700],
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -245,12 +252,16 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                         children: [
                           Text(
                             'Presupuesto diario',
-                            style: theme.textTheme.titleMedium?.copyWith(fontSize: 16),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontSize: 16,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Cuánto puedes gastar por día',
-                            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontSize: 13,
+                            ),
                           ),
                         ],
                       ),
@@ -268,7 +279,9 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                       child: Text(
                         _isEditingBudget ? 'Cancelar' : 'Editar',
                         style: TextStyle(
-                          color: isDark ? theme.colorScheme.primary : Colors.green[700],
+                          color: isDark
+                              ? theme.colorScheme.primary
+                              : Colors.green[700],
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -282,12 +295,16 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                       Expanded(
                         child: TextField(
                           controller: _budgetController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                           decoration: InputDecoration(
                             prefixText: 'S/  ',
                             hintText: '145',
                             filled: true,
-                            fillColor: isDark ? DarkTheme.surfaceSoft : Colors.white,
+                            fillColor: isDark
+                                ? DarkTheme.surfaceSoft
+                                : Colors.white,
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(color: Colors.green[600]!),
@@ -309,7 +326,9 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                           onPressed: _saveBudget,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green[600],
-                            foregroundColor: isDark ? DarkTheme.background : Colors.white,
+                            foregroundColor: isDark
+                                ? DarkTheme.background
+                                : Colors.white,
                             elevation: 0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -330,7 +349,8 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                     runSpacing: 10,
                     children: _quickBudgetOptions.map((amount) {
                       final isSelected =
-                          _budgetController.text.trim() == amount.toStringAsFixed(0);
+                          _budgetController.text.trim() ==
+                          amount.toStringAsFixed(0);
 
                       return InkWell(
                         onTap: () => _applyQuickBudget(amount),
@@ -342,8 +362,12 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? (isDark ? const Color(0xFF203A24) : Colors.green[50])
-                                : (isDark ? DarkTheme.surfaceSoft : Colors.grey[100]),
+                                ? (isDark
+                                      ? const Color(0xFF203A24)
+                                      : Colors.green[50])
+                                : (isDark
+                                      ? DarkTheme.surfaceSoft
+                                      : Colors.grey[100]),
                             borderRadius: BorderRadius.circular(18),
                             border: Border.all(
                               color: isSelected
@@ -355,7 +379,9 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                             'S/ ${amount.toStringAsFixed(0)}',
                             style: TextStyle(
                               color: isSelected
-                                  ? (isDark ? theme.colorScheme.primary : Colors.green[700])
+                                  ? (isDark
+                                        ? theme.colorScheme.primary
+                                        : Colors.green[700])
                                   : theme.textTheme.bodyMedium?.color,
                               fontWeight: FontWeight.w600,
                             ),
@@ -417,9 +443,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
 
     if (parsedValue == null || parsedValue <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Ingresa un presupuesto diario válido'),
-        ),
+        const SnackBar(content: Text('Ingresa un presupuesto diario válido')),
       );
       return;
     }
@@ -431,9 +455,7 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Presupuesto diario actualizado'),
-      ),
+      const SnackBar(content: Text('Presupuesto diario actualizado')),
     );
   }
 
@@ -473,24 +495,6 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
                       setState(() {
                         _notificationEnabled = value;
                       });
-                    },
-                  ),
-                  removeBottomMargin: true,
-                  useInsideGroupStyle: true,
-                ),
-                Divider(height: 1, color: theme.dividerColor),
-                _buildSettingItem(
-                  context: context,
-                  icon: Icons.dark_mode_outlined,
-                  title: 'Modo oscuro',
-                  subtitle: _darkModeEnabled ? 'Tema oscuro activado' : 'Usando tema claro',
-                  trailing: Switch(
-                    value: _darkModeEnabled,
-                    onChanged: (value) {
-                      setState(() {
-                        _darkModeEnabled = value;
-                      });
-                      ThemeController.instance.toggleTheme(value);
                     },
                   ),
                   removeBottomMargin: true,
@@ -695,17 +699,12 @@ class _ConfigurationPageState extends State<ConfigurationPage> {
           ),
           child: const Text(
             'Cerrar Sesión',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
       ),
     );
   }
-
-  
 
   void _showLogoutDialog() {
     final theme = Theme.of(context);

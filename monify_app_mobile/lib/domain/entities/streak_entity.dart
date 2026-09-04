@@ -10,7 +10,7 @@ class StreakEntity {
     required this.userId,
     required this.rachaActual,
     required this.mejorRacha,
-    this.ultimaFecha
+    this.ultimaFecha,
   });
 
   bool hasActiveStreak() => rachaActual > 0;
@@ -20,13 +20,12 @@ class StreakEntity {
   bool shouldResetStreak(DateTime today) {
     if (ultimaFecha == null) return true;
 
-    final daysDifference =today.difference(ultimaFecha!).inDays;
+    final daysDifference = today.difference(ultimaFecha!).inDays;
     return daysDifference > 1;
   }
 
-
   int calculateNewStreak(DateTime today) {
-    if(ultimaFecha == null) return 1;
+    if (ultimaFecha == null) return 1;
 
     final daysDifference = today.difference(ultimaFecha!).inDays;
 
@@ -38,6 +37,4 @@ class StreakEntity {
       return 1;
     }
   }
-
-
 }

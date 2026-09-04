@@ -11,7 +11,6 @@ class CategoryModel {
     required this.color,
   });
 
-
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(
       id: json['id'],

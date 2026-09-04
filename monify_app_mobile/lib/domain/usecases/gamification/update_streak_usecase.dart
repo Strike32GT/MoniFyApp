@@ -64,7 +64,8 @@ class UpdateStreakUsecase {
   List<String> _getStreakMilestones(StreakEntity streak) {
     final milestones = <String>[];
 
-    if (_isSameDay(streak.ultimaFecha, DateTime.now()) && streak.rachaActual == 1) {
+    if (_isSameDay(streak.ultimaFecha, DateTime.now()) &&
+        streak.rachaActual == 1) {
       milestones.add('Comenzaste una nueva racha hoy!');
     }
 
@@ -140,7 +141,9 @@ class UpdateStreakUsecase {
         'current_streak': currentStreak.rachaActual,
         'best_streak': currentStreak.mejorRacha,
         'has_active_streak': currentStreak.hasActiveStreak(),
-        'days_to_next_milestone': _getDaysToNextMilestone(currentStreak.rachaActual),
+        'days_to_next_milestone': _getDaysToNextMilestone(
+          currentStreak.rachaActual,
+        ),
         'streak_status': _getStreakStatus(currentStreak),
         'last_update': currentStreak.ultimaFecha,
         'streak_percentage': _getStreakPercentage(currentStreak),

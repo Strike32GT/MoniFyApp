@@ -6,8 +6,6 @@ class AddExpenseModal extends StatefulWidget {
 
   @override
   State<AddExpenseModal> createState() => _AddExpenseModalState();
-
-
 }
 
 class _AddExpenseModalState extends State<AddExpenseModal> {
@@ -15,25 +13,22 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
   String _selectedCategory = 'Comida';
   final TextEditingController _descriptionController = TextEditingController();
 
-
-  final List<Map<String,dynamic>> _categories = [
-    {'label': 'Comida', 'icon' : Icons.fastfood},
-    {'label': 'Transportes', 'icon' : Icons.directions_bus},
-    {'label': 'Compras', 'icon' : Icons.shopping_bag},
-    {'label': 'Salud', 'icon' : Icons.medication},
+  final List<Map<String, dynamic>> _categories = [
+    {'label': 'Comida', 'icon': Icons.fastfood},
+    {'label': 'Transportes', 'icon': Icons.directions_bus},
+    {'label': 'Compras', 'icon': Icons.shopping_bag},
+    {'label': 'Salud', 'icon': Icons.medication},
   ];
-
 
   void _onKeyPressed(String key) {
     setState(() {
       if (key == '.') {
-        if(_amount.contains('.')) return;
+        if (_amount.contains('.')) return;
         _amount += '.';
         return;
       }
 
-
-      if(_amount == '0.00' || _amount == '0') {
+      if (_amount == '0.00' || _amount == '0') {
         _amount = key;
       } else {
         _amount += key;
@@ -41,11 +36,10 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
     });
   }
 
-
   void _onBackspace() {
     setState(() {
       if (_amount.isNotEmpty) {
-        _amount = _amount.substring(0, _amount.length -1);
+        _amount = _amount.substring(0, _amount.length - 1);
       }
 
       if (_amount.isEmpty) {
@@ -54,13 +48,11 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
     });
   }
 
-
   void _saveExpense() {
     final description = _descriptionController.text.trim();
 
-
     showDialog(
-      context: context, 
+      context: context,
       builder: (context) => AlertDialog(
         title: const Text('Gasto agregado'),
         content: Text(
@@ -75,13 +67,11 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
               Navigator.of(context).pop();
             },
             child: const Text('OK'),
-          )
+          ),
         ],
-      )
+      ),
     );
   }
-
-
 
   @override
   void dispose() {
@@ -89,16 +79,13 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 30),
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(28),
-        )
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: SafeArea(
         top: false,
@@ -119,10 +106,7 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
               children: [
                 const Text(
                   'Nuevo gasto',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 InkWell(
                   onTap: () => Navigator.pop(context),
@@ -180,7 +164,6 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
                   final category = _categories[index];
                   final isSelected = _selectedCategory == category['label'];
 
-
                   return GestureDetector(
                     onTap: () {
                       setState(() {
@@ -191,10 +174,14 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
                       width: 72,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFFFFF1F1) : Colors.white,
+                        color: isSelected
+                            ? const Color(0xFFFFF1F1)
+                            : Colors.white,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: isSelected ? Colors.redAccent : Colors.grey.shade200,
+                          color: isSelected
+                              ? Colors.redAccent
+                              : Colors.grey.shade200,
                         ),
                       ),
                       child: Column(
@@ -203,7 +190,9 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
                           Icon(
                             category['icon']! as IconData,
                             size: 22,
-                            color: isSelected ? Colors.redAccent : Colors.grey[700],
+                            color: isSelected
+                                ? Colors.redAccent
+                                : Colors.grey[700],
                           ),
                           const SizedBox(height: 6),
                           Text(
@@ -211,10 +200,14 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 11,
-                              color: isSelected ? Colors.redAccent : Colors.grey[700],
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              color: isSelected
+                                  ? Colors.redAccent
+                                  : Colors.grey[700],
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -249,33 +242,33 @@ class _AddExpenseModalState extends State<AddExpenseModal> {
             ),
             const SizedBox(height: 18),
             ExpenseKeypad(
-              value: _amount, 
-              onlyKeyPressed: _onKeyPressed, 
+              value: _amount,
+              onlyKeyPressed: _onKeyPressed,
               onBackspace: _onBackspace,
-              ),
-              const SizedBox(height: 18),
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: ElevatedButton(
-                  onPressed: _saveExpense,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey[100],
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: ElevatedButton(
+                onPressed: _saveExpense,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueGrey[100],
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                  child: const Text(
-                    'Agregar Gasto',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                ),
+                child: const Text(
+                  'Agregar Gasto',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),
+            ),
           ],
         ),
       ),

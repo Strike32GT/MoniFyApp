@@ -96,7 +96,10 @@ class _HistoryPageState extends State<HistoryPage> {
       child: TextField(
         decoration: InputDecoration(
           hintText: 'Buscar gastos...',
-          prefixIcon: Icon(Icons.search, color: theme.textTheme.bodyMedium?.color),
+          prefixIcon: Icon(
+            Icons.search,
+            color: theme.textTheme.bodyMedium?.color,
+          ),
         ),
       ),
     );
@@ -188,15 +191,17 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Widget _buildSummaryItem(BuildContext context, String label, String amount, Color color) {
+  Widget _buildSummaryItem(
+    BuildContext context,
+    String label,
+    String amount,
+    Color color,
+  ) {
     final theme = Theme.of(context);
 
     return Column(
       children: [
-        Text(
-          label,
-          style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
-        ),
+        Text(label, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12)),
         const SizedBox(height: 4),
         Text(
           amount,
@@ -227,71 +232,61 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
           ),
           const SizedBox(height: 16),
-          _buildTransactionGroup(
-            context,
-            'Hoy',
-            [
-              _buildTransactionItem(
-                context,
-                'Almuerzo restaurante',
-                '-S/18.50',
-                Icons.lunch_dining,
-                Colors.red,
-                '13:20',
-                'Comida',
-                Colors.redAccent,
-              ),
-              _buildTransactionItem(
-                context,
-                'Bus linea 3',
-                '-S/5.00',
-                Icons.directions_bus,
-                Colors.red,
-                '08:15',
-                'Transporte',
-                Colors.green,
-              ),
-              _buildTransactionItem(
-                context,
-                'Snacks tienda',
-                '-S/12.00',
-                Icons.shopping_bag,
-                Colors.red,
-                '10:30',
-                'Compras',
-                Colors.purpleAccent,
-              ),
-            ],
-            isDark,
-          ),
+          _buildTransactionGroup(context, 'Hoy', [
+            _buildTransactionItem(
+              context,
+              'Almuerzo restaurante',
+              '-S/18.50',
+              Icons.lunch_dining,
+              Colors.red,
+              '13:20',
+              'Comida',
+              Colors.redAccent,
+            ),
+            _buildTransactionItem(
+              context,
+              'Bus linea 3',
+              '-S/5.00',
+              Icons.directions_bus,
+              Colors.red,
+              '08:15',
+              'Transporte',
+              Colors.green,
+            ),
+            _buildTransactionItem(
+              context,
+              'Snacks tienda',
+              '-S/12.00',
+              Icons.shopping_bag,
+              Colors.red,
+              '10:30',
+              'Compras',
+              Colors.purpleAccent,
+            ),
+          ], isDark),
           const SizedBox(height: 20),
-          _buildTransactionGroup(
-            context,
-            'Ayer',
-            [
-              _buildTransactionItem(
-                context,
-                'Supermercado',
-                'S/85.50',
-                Icons.shopping_cart,
-                Colors.red,
-                '18:45',
-                null,
-                null,
-              ),
-              _buildTransactionItem(
-                context,
-                'Salario',
-                'S/500.00',
-                Icons.work,
-                Colors.green,
-                '09:00',
-                null,
-                null,
-              ),
-            ],
-            false,
-          ),
+          _buildTransactionGroup(context, 'Ayer', [
+            _buildTransactionItem(
+              context,
+              'Supermercado',
+              'S/85.50',
+              Icons.shopping_cart,
+              Colors.red,
+              '18:45',
+              null,
+              null,
+            ),
+            _buildTransactionItem(
+              context,
+              'Salario',
+              'S/500.00',
+              Icons.work,
+              Colors.green,
+              '09:00',
+              null,
+              null,
+            ),
+          ], false),
         ],
       ),
     );
@@ -378,10 +373,7 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
             const SizedBox(width: 8),
           ],
-          Text(
-            time,
-            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
-          ),
+          Text(time, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12)),
         ],
       ),
       trailing: Text(

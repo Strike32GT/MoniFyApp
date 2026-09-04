@@ -6,11 +6,8 @@ class ProfilePage extends StatelessWidget {
   final String userName;
   final String userEmail;
 
-  const ProfilePage({
-    Key? key,
-    required this.userName,
-    required this.userEmail,
-  }) : super(key: key);
+  const ProfilePage({Key? key, required this.userName, required this.userEmail})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -64,9 +61,14 @@ class ProfilePage extends StatelessWidget {
               ),
               IconButton(
                 style: IconButton.styleFrom(
-                  backgroundColor: isDark ? DarkTheme.surface : Colors.transparent,
+                  backgroundColor: isDark
+                      ? DarkTheme.surface
+                      : Colors.transparent,
                 ),
-                icon: Icon(Icons.settings, color: theme.textTheme.bodyMedium?.color),
+                icon: Icon(
+                  Icons.settings,
+                  color: theme.textTheme.bodyMedium?.color,
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -173,7 +175,11 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          const Icon(Icons.star, color: Color(0xFFFFC928), size: 16),
+                          const Icon(
+                            Icons.star,
+                            color: Color(0xFFFFC928),
+                            size: 16,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             'Nivel 4 - Ahorrador Pro',
@@ -206,7 +212,9 @@ class ProfilePage extends StatelessWidget {
                 value: 0.625,
                 minHeight: 8,
                 backgroundColor: Colors.white.withOpacity(0.24),
-                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFFFC928)),
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  Color(0xFFFFC928),
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -258,7 +266,10 @@ class ProfilePage extends StatelessWidget {
                   ),
                   if (isDark)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF3B3B20),
                         borderRadius: BorderRadius.circular(999),
@@ -305,13 +316,17 @@ class ProfilePage extends StatelessWidget {
                         if (!isDark)
                           Text(
                             'dentro del presupuesto',
-                            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 14),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontSize: 14,
+                            ),
                           ),
                         if (isDark) ...[
                           const SizedBox(height: 4),
                           Text(
                             'iSigue asi! Solo 4 dias mas para tu proximo logro',
-                            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontSize: 12,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -338,7 +353,11 @@ class ProfilePage extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.emoji_events, color: Colors.green[600], size: 20),
+                      Icon(
+                        Icons.emoji_events,
+                        color: Colors.green[600],
+                        size: 20,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -430,10 +449,7 @@ class ProfilePage extends StatelessWidget {
         ),
         if (isDark) ...[
           const SizedBox(height: 6),
-          Text(
-            day,
-            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 11),
-          ),
+          Text(day, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 11)),
         ],
       ],
     );
@@ -461,9 +477,9 @@ class ProfilePage extends StatelessWidget {
     return Text(
       title,
       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 
@@ -569,18 +585,54 @@ class ProfilePage extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildBadge(context, Icons.star, 'Primer paso', Colors.amber[600]!, true),
-            _buildBadge(context, Icons.trending_up, 'En ascenso', Colors.green[600]!, true),
-            _buildBadge(context, Icons.emoji_events, 'Campeon', Colors.purple[600]!, true),
+            _buildBadge(
+              context,
+              Icons.star,
+              'Primer paso',
+              Colors.amber[600]!,
+              true,
+            ),
+            _buildBadge(
+              context,
+              Icons.trending_up,
+              'En ascenso',
+              Colors.green[600]!,
+              true,
+            ),
+            _buildBadge(
+              context,
+              Icons.emoji_events,
+              'Campeon',
+              Colors.purple[600]!,
+              true,
+            ),
           ],
         ),
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildBadge(context, Icons.local_fire_department, 'En fuego', Colors.orange[600]!, false),
-            _buildBadge(context, Icons.military_tech, 'Experto', Colors.blue[600]!, false),
-            _buildBadge(context, Icons.diamond, 'Diamante', Colors.grey[400]!, false),
+            _buildBadge(
+              context,
+              Icons.local_fire_department,
+              'En fuego',
+              Colors.orange[600]!,
+              false,
+            ),
+            _buildBadge(
+              context,
+              Icons.military_tech,
+              'Experto',
+              Colors.blue[600]!,
+              false,
+            ),
+            _buildBadge(
+              context,
+              Icons.diamond,
+              'Diamante',
+              Colors.grey[400]!,
+              false,
+            ),
           ],
         ),
       ],
@@ -603,7 +655,9 @@ class ProfilePage extends StatelessWidget {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            color: isUnlocked ? color.withOpacity(isDark ? 0.18 : 0.12) : theme.dividerColor,
+            color: isUnlocked
+                ? color.withOpacity(isDark ? 0.18 : 0.12)
+                : theme.dividerColor,
             shape: BoxShape.circle,
             border: Border.all(
               color: isUnlocked ? color : theme.dividerColor,
@@ -612,7 +666,9 @@ class ProfilePage extends StatelessWidget {
           ),
           child: Icon(
             icon,
-            color: isUnlocked ? color : theme.textTheme.bodyMedium?.color?.withOpacity(0.55),
+            color: isUnlocked
+                ? color
+                : theme.textTheme.bodyMedium?.color?.withOpacity(0.55),
             size: 30,
           ),
         ),

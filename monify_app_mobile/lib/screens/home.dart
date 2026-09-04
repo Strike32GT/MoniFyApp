@@ -7,15 +7,15 @@ import 'package:monify_app_mobile/screens/widgets/add_expense_modal.dart';
 import 'package:monify_app_mobile/themes/dark_theme.dart';
 import 'package:monify_app_mobile/themes/normal_theme.dart';
 
-class Home extends StatefulWidget{
+class Home extends StatefulWidget {
   final String userName; //El nombre del usuario "Hola ${userName}""
   final String userEmail;
-  const Home({Key? key, required this.userName, required this.userEmail}) : super(key: key);
+  const Home({Key? key, required this.userName, required this.userEmail})
+    : super(key: key);
 
-  @override 
+  @override
   State<Home> createState() => _HomeState();
 }
-
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
@@ -26,7 +26,6 @@ class _HomeState extends State<Home> {
     const HistoryPage(),
     ProfilePage(userName: widget.userName, userEmail: widget.userEmail),
   ];
-
 
   void _openAddExpenseModal() {
     showModalBottomSheet(
@@ -60,15 +59,39 @@ class _HomeState extends State<Home> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(0, Icons.home_outlined, 'Inicio', colorScheme, isDark),
-            _buildNavItem(1, Icons.bar_chart_outlined, 'Estadistica', colorScheme, isDark),
+            _buildNavItem(
+              0,
+              Icons.home_outlined,
+              'Inicio',
+              colorScheme,
+              isDark,
+            ),
+            _buildNavItem(
+              1,
+              Icons.bar_chart_outlined,
+              'Estadistica',
+              colorScheme,
+              isDark,
+            ),
             //_buildAddButton(),
             Transform.translate(
               offset: const Offset(0.0, -20.0),
               child: _buildAddButton(colorScheme),
             ),
-            _buildNavItem(2, Icons.history_outlined, 'Historial', colorScheme, isDark),
-            _buildNavItem(3, Icons.person_outline, 'Perfil', colorScheme, isDark),
+            _buildNavItem(
+              2,
+              Icons.history_outlined,
+              'Historial',
+              colorScheme,
+              isDark,
+            ),
+            _buildNavItem(
+              3,
+              Icons.person_outline,
+              'Perfil',
+              colorScheme,
+              isDark,
+            ),
           ],
         ),
       ),
@@ -98,11 +121,7 @@ class _HomeState extends State<Home> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 22,
-              color: isActive ? activeColor : inactiveColor,
-            ),
+            Icon(icon, size: 22, color: isActive ? activeColor : inactiveColor),
             const SizedBox(height: 4),
             Text(
               label,
@@ -119,7 +138,6 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-
 
   Widget _buildAddButton(ColorScheme colorScheme) {
     return GestureDetector(
@@ -141,25 +159,20 @@ class _HomeState extends State<Home> {
               color: colorScheme.primary.withOpacity(0.25),
               blurRadius: 10,
               offset: const Offset(0, 5),
-            )
+            ),
           ],
         ),
-        child: Icon(
-          Icons.add,
-          size: 28,
-          color: Colors.white,
-        ),
+        child: Icon(Icons.add, size: 28, color: Colors.white),
       ),
     );
   }
 }
 
-
 class HomePage extends StatelessWidget {
   final String userName;
   const HomePage({Key? key, required this.userName}) : super(key: key);
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -202,58 +215,58 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   List<NotificationItem> notifications = [
                     NotificationItem(
-                      title: '¡Nuevo logro desbloqueado!', 
-                      description: 'Has completado tu primer reto de ahorro semanal', 
-                      time: 'Hace 2 horas', 
+                      title: '¡Nuevo logro desbloqueado!',
+                      description:
+                          'Has completado tu primer reto de ahorro semanal',
+                      time: 'Hace 2 horas',
                       type: NotificationType.achievement,
                       isRead: false,
-                      ),
+                    ),
 
-                      NotificationItem(
-                      title: '¡Nuevo logro desbloqueado!', 
-                      description: 'Has gastado el 75% de tu presupuesto semanal', 
-                      time: 'Hace 4 horas', 
+                    NotificationItem(
+                      title: '¡Nuevo logro desbloqueado!',
+                      description:
+                          'Has gastado el 75% de tu presupuesto semanal',
+                      time: 'Hace 4 horas',
                       type: NotificationType.success,
                       isRead: true,
-                      ),
+                    ),
 
-
-                      NotificationItem(
-                      title: 'Nuevo reto disponible', 
-                      description: 'Participa en el reto "Sin gastos impulsivos"', 
-                      time: 'Hace 2 horas', 
+                    NotificationItem(
+                      title: 'Nuevo reto disponible',
+                      description:
+                          'Participa en el reto "Sin gastos impulsivos"',
+                      time: 'Hace 2 horas',
                       type: NotificationType.achievement,
                       isRead: true,
-                      ),
+                    ),
                   ];
 
                   NotificationWdgt.showNotificationMenu(
                     context,
                     notifications: notifications,
-                    );
+                  );
                 },
-                ),
+              ),
             ],
           ),
           const SizedBox(height: 20),
           const Text(
             'Presupuesto Actual',
-            style: TextStyle(color: Colors.white70,fontSize: 16),
+            style: TextStyle(color: Colors.white70, fontSize: 16),
           ),
           const Text(
             'S/14.50',
             style: TextStyle(
               color: Colors.white,
               fontSize: 42,
-              fontWeight: FontWeight.bold
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
       ),
     );
-  } 
-
-
+  }
 
   Widget _buildBalanceCard(BuildContext context) {
     return Padding(
@@ -266,9 +279,24 @@ class HomePage extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildBalanceItem('Ingresos','S/500.00', Colors.green, Icons.arrow_upward),
-              _buildBalanceItem('Gastos','S/485.50', Colors.red, Icons.arrow_downward),
-              _buildBalanceItem('Ahorro','S/14.50', Colors.blue, Icons.savings),
+              _buildBalanceItem(
+                'Ingresos',
+                'S/500.00',
+                Colors.green,
+                Icons.arrow_upward,
+              ),
+              _buildBalanceItem(
+                'Gastos',
+                'S/485.50',
+                Colors.red,
+                Icons.arrow_downward,
+              ),
+              _buildBalanceItem(
+                'Ahorro',
+                'S/14.50',
+                Colors.blue,
+                Icons.savings,
+              ),
             ],
           ),
         ),
@@ -276,8 +304,12 @@ class HomePage extends StatelessWidget {
     );
   }
 
-
-  Widget _buildBalanceItem(String title, String amount, Color color, IconData icon) {
+  Widget _buildBalanceItem(
+    String title,
+    String amount,
+    Color color,
+    IconData icon,
+  ) {
     return Column(
       children: [
         Container(
@@ -286,13 +318,10 @@ class HomePage extends StatelessWidget {
             color: color.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon,color: color, size: 24),
+          child: Icon(icon, color: color, size: 24),
         ),
         const SizedBox(height: 8),
-        Text(
-          title,
-          style: TextStyle(color: Colors.grey[600], fontSize: 12),
-        ),
+        Text(title, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
         Text(
           amount,
           style: TextStyle(
@@ -304,8 +333,6 @@ class HomePage extends StatelessWidget {
       ],
     );
   }
-
-
 
   Widget _buildQuickActions(BuildContext context) {
     return Padding(
@@ -346,7 +373,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-
   Widget _buildRecentTransactions(BuildContext context) {
     final textColor = Theme.of(context).textTheme.titleLarge?.color;
     return Padding(
@@ -363,16 +389,35 @@ class HomePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          _buildTransactionItem('Supermercado', 'S/85.50', Icons.shopping_cart, Colors.red),
-          _buildTransactionItem('Salario', 'S/500.00', Icons.work, Colors.green),
-          _buildTransactionItem('Transporte', 'S/20.00', Icons.directions_bus, Colors.red),
+          _buildTransactionItem(
+            'Supermercado',
+            'S/85.50',
+            Icons.shopping_cart,
+            Colors.red,
+          ),
+          _buildTransactionItem(
+            'Salario',
+            'S/500.00',
+            Icons.work,
+            Colors.green,
+          ),
+          _buildTransactionItem(
+            'Transporte',
+            'S/20.00',
+            Icons.directions_bus,
+            Colors.red,
+          ),
         ],
-      )
+      ),
     );
   }
 
-
-  Widget _buildTransactionItem(String title, String amount, IconData icon, Color color) {
+  Widget _buildTransactionItem(
+    String title,
+    String amount,
+    IconData icon,
+    Color color,
+  ) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -386,12 +431,8 @@ class HomePage extends StatelessWidget {
       subtitle: Text('Hoy'),
       trailing: Text(
         amount,
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(color: color, fontWeight: FontWeight.bold),
       ),
     );
   }
-
 }

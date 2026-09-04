@@ -76,14 +76,13 @@ class TransactionProvider extends ChangeNotifier {
         fecha: DateTime.now(),
       );
 
-      final newTransaction = await _createTransactionUseCase.execute(transaction);
+      final newTransaction = await _createTransactionUseCase.execute(
+        transaction,
+      );
       _transactions.insert(0, newTransaction);
       _applyFilters();
 
-      await Future.wait([
-        loadTodaySummary(),
-        loadWeeklyStats(),
-      ]);
+      await Future.wait([loadTodaySummary(), loadWeeklyStats()]);
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
@@ -158,7 +157,8 @@ class TransactionProvider extends ChangeNotifier {
       var matchesSearch = true;
       if (_searchQuery.isNotEmpty) {
         matchesSearch =
-            transaction.descripcion?.toLowerCase().contains(_searchQuery) == true ||
+            transaction.descripcion?.toLowerCase().contains(_searchQuery) ==
+                true ||
             transaction.monto.toString().contains(_searchQuery);
       }
 
@@ -235,6 +235,8 @@ class TransactionProvider extends ChangeNotifier {
   }
 
   List<TransactionEntity> getTransactionsByCategory(int categoryId) {
-    return _filteredTransactions.where((t) => t.categoryId == categoryId).toList();
+    return _filteredTransactions
+        .where((t) => t.categoryId == categoryId)
+        .toList();
   }
 }

@@ -2,35 +2,36 @@ import 'package:flutter/foundation.dart';
 import 'package:monify_app_mobile/domain/entities/user_entity.dart';
 import 'package:monify_app_mobile/domain/usecases/auth/register_usecase.dart';
 
-class RegisterViewmodel extends ChangeNotifier{
+class RegisterViewmodel extends ChangeNotifier {
   final RegisterUseCase _registerUseCase;
 
   bool _isLoading = false;
   String? _errorMessage;
   UserEntity? _currentUser;
-  bool _registerSuccess  = false;
+  bool _registerSuccess = false;
 
   RegisterViewmodel(this._registerUseCase);
-
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   UserEntity? get currentUser => _currentUser;
-  bool get registerSucess => _registerSuccess ;
-
+  bool get registerSucess => _registerSuccess;
 
   Future<void> register({
     required String nombre,
     required String email,
     required String password,
-    required String confirmPassword
+    required String confirmPassword,
   }) async {
-    if (nombre.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (nombre.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       _errorMessage = "Completa los campos";
       notifyListeners();
       return;
     }
-    
+
     if (password != confirmPassword) {
       _errorMessage = "Password no coinciden";
       notifyListeners();
@@ -46,17 +47,16 @@ class RegisterViewmodel extends ChangeNotifier{
     _setLoading(true);
     _clearError();
 
-
     try {
       final userData = {
         'nombre': nombre.trim(),
         'correo': email.trim(),
         'password': password.trim(),
-        'rol' : 'usuario',
+        'rol': 'usuario',
       };
 
       _currentUser = await _registerUseCase.execute(userData);
-      _registerSuccess  = true;
+      _registerSuccess = true;
 
       notifyListeners();
     } catch (e) {
@@ -66,12 +66,10 @@ class RegisterViewmodel extends ChangeNotifier{
     }
   }
 
-
   void _setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
   }
-
 
   void _clearError() {
     _errorMessage = null;

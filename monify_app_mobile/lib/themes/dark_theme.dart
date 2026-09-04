@@ -47,30 +47,21 @@ class DarkTheme {
         backgroundColor: primaryGreen,
         foregroundColor: const Color(0xFF0F172A),
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-        textStyle: const TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 15,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: textPrimary,
         side: const BorderSide(color: border),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: primaryGreen,
-        textStyle: const TextStyle(
-          fontWeight: FontWeight.w600,
-        ),
+        textStyle: const TextStyle(fontWeight: FontWeight.w600),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -126,34 +117,19 @@ class DarkTheme {
     snackBarTheme: SnackBarThemeData(
       backgroundColor: surfaceSoft,
       contentTextStyle: const TextStyle(color: textPrimary),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       behavior: SnackBarBehavior.floating,
     ),
     textTheme: const TextTheme(
-      headlineLarge: TextStyle(
-        color: textPrimary,
-        fontWeight: FontWeight.bold,
-      ),
+      headlineLarge: TextStyle(color: textPrimary, fontWeight: FontWeight.bold),
       headlineMedium: TextStyle(
         color: textPrimary,
         fontWeight: FontWeight.bold,
       ),
-      titleLarge: TextStyle(
-        color: textPrimary,
-        fontWeight: FontWeight.w700,
-      ),
-      titleMedium: TextStyle(
-        color: textPrimary,
-        fontWeight: FontWeight.w600,
-      ),
-      bodyLarge: TextStyle(
-        color: textPrimary,
-      ),
-      bodyMedium: TextStyle(
-        color: textSecondary,
-      ),
+      titleLarge: TextStyle(color: textPrimary, fontWeight: FontWeight.w700),
+      titleMedium: TextStyle(color: textPrimary, fontWeight: FontWeight.w600),
+      bodyLarge: TextStyle(color: textPrimary),
+      bodyMedium: TextStyle(color: textSecondary),
     ),
   );
 }

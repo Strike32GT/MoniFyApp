@@ -11,7 +11,6 @@ class UserEntity {
   final int mejorRacha;
   final DateTime fechaCreacion;
 
-
   UserEntity({
     required this.id,
     required this.nombre,
@@ -28,13 +27,12 @@ class UserEntity {
 
   //Las Reglas de negocio de la App
   bool canUpgradeToNextLevel() {
-    return xpActual >= (nivel*100);
+    return xpActual >= (nivel * 100);
   }
 
   int getXpForNextLevel() {
-    return (nivel+1) * 100 - xpActual;
+    return (nivel + 1) * 100 - xpActual;
   }
 
-  bool hasAvatar() => avatar != null && avatar!.isNotEmpty; 
-
+  bool hasAvatar() => avatar != null && avatar!.isNotEmpty;
 }

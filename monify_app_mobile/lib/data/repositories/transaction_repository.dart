@@ -11,42 +11,40 @@ abstract class TransactionRepository {
   Future<Map<String, dynamic>> getWeeklyStats();
 }
 
-
 class TransactionRepositoryImpl implements TransactionRepository {
   final TransactionService _transactionService;
 
   TransactionRepositoryImpl(this._transactionService);
 
-
-  @override 
+  @override
   Future<List<TransactionEntity>> getTransactions() async {
     final models = await _transactionService.getTransactions();
     return models.map((transaction) => transaction.toEntity()).toList();
   }
 
-  Future<TransactionEntity> createTransaction(TransactionModel transaction) async {
+  @override
+  Future<TransactionEntity> createTransaction(
+    TransactionModel transaction,
+  ) async {
     final model = await _transactionService.createTransaction({
-      'category':transaction.category,
-      'tipo':transaction.tipo,
-      'monto':transaction.monto,
-      'descripcion':transaction.descripcion,
+      'category': transaction.category,
+      'tipo': transaction.tipo,
+      'monto': transaction.monto,
+      'descripcion': transaction.descripcion,
     });
 
     return model.toEntity();
   }
-
 
   @override
   Future<List<CategoryModel>> getCategories() async {
     return await _transactionService.getCategories();
   }
 
-
   @override
   Future<Map<String, dynamic>> getTodaySummary() async {
     return await _transactionService.getTodaySummary();
   }
-
 
   @override
   Future<Map<String, dynamic>> getWeeklyStats() async {

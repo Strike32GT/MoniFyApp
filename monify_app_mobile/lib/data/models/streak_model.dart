@@ -5,7 +5,6 @@ class StreakModel {
   final int mejorRacha;
   final DateTime? ultimaFecha;
 
-
   StreakModel({
     required this.id,
     required this.user,
@@ -14,7 +13,6 @@ class StreakModel {
     this.ultimaFecha,
   });
 
-
   factory StreakModel.fromJson(Map<String, dynamic> json) {
     return StreakModel(
       id: json['id'],
@@ -22,8 +20,8 @@ class StreakModel {
       rachaActual: json['racha_actual'],
       mejorRacha: json['mejor_racha'],
       ultimaFecha: json['ultima_fecha'] != null
-      ? DateTime.parse(json['ultima_fecha'])
-      : null,
+          ? DateTime.parse(json['ultima_fecha'])
+          : null,
     );
   }
 }

@@ -13,7 +13,6 @@ class UserModel {
   final int mejorRacha;
   final DateTime fechaCreacion;
 
-
   UserModel({
     required this.id,
     required this.nombre,
@@ -28,7 +27,6 @@ class UserModel {
     required this.fechaCreacion,
   });
 
-
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'],
@@ -42,21 +40,21 @@ class UserModel {
       xpActual: json['xpActual'],
       mejorRacha: json['mejorRacha'],
       fechaCreacion: DateTime.parse(json['fechaCreacion']),
-      );
+    );
   }
 
   UserEntity toEntity() {
     return UserEntity(
-      id: id, 
-      nombre: nombre, 
-      correo: correo, 
-      rol: rol, 
-      presupuesto: presupuesto, 
-      moneda: moneda, 
-      nivel: nivel, 
-      xpActual: xpActual, 
-      mejorRacha: mejorRacha, 
-      fechaCreacion: fechaCreacion
-      );
+      id: id,
+      nombre: nombre,
+      correo: correo,
+      rol: rol,
+      presupuesto: presupuesto,
+      moneda: moneda,
+      nivel: nivel,
+      xpActual: xpActual,
+      mejorRacha: mejorRacha,
+      fechaCreacion: fechaCreacion,
+    );
   }
 }

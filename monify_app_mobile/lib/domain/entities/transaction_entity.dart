@@ -7,7 +7,6 @@ class TransactionEntity {
   final String? descripcion;
   final DateTime fecha;
 
-
   TransactionEntity({
     required this.id,
     required this.userId,
@@ -18,7 +17,6 @@ class TransactionEntity {
     required this.fecha,
   });
 
-
   bool isInCome() => tipo == 'ingreso';
   bool isExpense() => tipo == 'gasto';
 
@@ -27,7 +25,7 @@ class TransactionEntity {
   }
 
   bool isValidType() {
-    return ['ingreso','gasto'].contains(tipo);
+    return ['ingreso', 'gasto'].contains(tipo);
   }
 
   String get formattedAmount {

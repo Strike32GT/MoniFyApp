@@ -5,32 +5,27 @@ class ExpenseKeypad extends StatelessWidget {
   final void Function(String key) onlyKeyPressed;
   final VoidCallback onBackspace;
 
-
   const ExpenseKeypad({
     Key? key,
     required this.value,
     required this.onlyKeyPressed,
-    required this.onBackspace
-  }): super(key: key);
+    required this.onBackspace,
+  }) : super(key: key);
 
-
-
-  @override 
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildRow(['1','2','3']),
+        _buildRow(['1', '2', '3']),
         const SizedBox(height: 10),
-        _buildRow(['4','5','6']),
+        _buildRow(['4', '5', '6']),
         const SizedBox(height: 10),
-        _buildRow(['7','8','9']),
+        _buildRow(['7', '8', '9']),
         const SizedBox(height: 10),
         _buildLastRow(),
       ],
     );
   }
-
-
 
   Widget _buildRow(List<String> keys) {
     return Row(
@@ -47,8 +42,6 @@ class ExpenseKeypad extends StatelessWidget {
       }).toList(),
     );
   }
-
-
 
   Widget _buildLastRow() {
     return Row(
@@ -68,7 +61,7 @@ class ExpenseKeypad extends StatelessWidget {
             child: _buildKeyButton(
               label: '0',
               onTap: () => onlyKeyPressed('0'),
-            ), 
+            ),
           ),
         ),
         Expanded(
@@ -81,11 +74,7 @@ class ExpenseKeypad extends StatelessWidget {
     );
   }
 
-
-  Widget _buildKeyButton({
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildKeyButton({required String label, required VoidCallback onTap}) {
     return SizedBox(
       height: 56,
       child: ElevatedButton(
@@ -100,15 +89,11 @@ class ExpenseKeypad extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
         ),
       ),
     );
   }
-
 
   Widget _buildBackspaceButton() {
     return SizedBox(
@@ -123,10 +108,7 @@ class ExpenseKeypad extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
           ),
         ),
-        child: const Icon(
-          Icons.backspace_outlined,
-          size: 24,
-        ),
+        child: const Icon(Icons.backspace_outlined, size: 24),
       ),
     );
   }

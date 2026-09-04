@@ -11,7 +11,6 @@ class AchievementModel {
     required this.icono,
   });
 
-
   factory AchievementModel.fromJson(Map<String, dynamic> json) {
     return AchievementModel(
       id: json['id'],

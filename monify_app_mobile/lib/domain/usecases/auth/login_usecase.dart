@@ -7,12 +7,14 @@ class LoginUsecase {
   LoginUsecase(this._repository);
 
   Future<UserEntity> execute(String email, String password) async {
-    if(!_isValidEmail(email)) {
+    if (!_isValidEmail(email)) {
       throw ValidationException('Email invalido');
     }
 
-    if(password.length < 6) {
-      throw ValidationException('La contraseña debe tener al menos 6 caracteres');
+    if (password.length < 6) {
+      throw ValidationException(
+        'La contraseña debe tener al menos 6 caracteres',
+      );
     }
 
     final user = await _repository.login(email, password);
@@ -24,7 +26,6 @@ class LoginUsecase {
     return email.contains('@') && email.contains('.') && email.length > 5;
   }
 }
-
 
 class ValidationException implements Exception {
   final String message;

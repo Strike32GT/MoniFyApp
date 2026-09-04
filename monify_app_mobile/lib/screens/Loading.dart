@@ -4,21 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:monify_app_mobile/screens/home.dart';
 
 class LoadingScreen extends StatefulWidget {
-  
   final String userName;
   final String userEmail;
-  const LoadingScreen({Key? key, this.userName = 'Usuario', required this.userEmail}) : super(key: key);
+  const LoadingScreen({
+    Key? key,
+    this.userName = 'Usuario',
+    required this.userEmail,
+  }) : super(key: key);
 
-  @override 
-  State<LoadingScreen> createState() => _LoadingScreenState(); 
+  @override
+  State<LoadingScreen> createState() => _LoadingScreenState();
 }
 
-
-class  _LoadingScreenState extends State<LoadingScreen> with TickerProviderStateMixin {
+class _LoadingScreenState extends State<LoadingScreen>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
-  
+
   @override
   void initState() {
     super.initState();
@@ -31,36 +34,31 @@ class  _LoadingScreenState extends State<LoadingScreen> with TickerProviderState
     _scaleAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.elasticOut,
-    ));
-
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller, curve: Curves.easeInOut,
-      ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-      _controller.forward();
+    _controller.forward();
 
-      Timer(const Duration(seconds: 3), () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => Home(userName: widget.userName, userEmail: widget.userEmail,)),
-          );
-      });
+    Timer(const Duration(seconds: 3), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              Home(userName: widget.userName, userEmail: widget.userEmail),
+        ),
+      );
+    });
   }
-
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +69,7 @@ class  _LoadingScreenState extends State<LoadingScreen> with TickerProviderState
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedBuilder(
-              animation: _scaleAnimation, 
+              animation: _scaleAnimation,
               builder: (context, child) {
                 return Transform.scale(
                   scale: _scaleAnimation.value,
@@ -93,7 +91,7 @@ class  _LoadingScreenState extends State<LoadingScreen> with TickerProviderState
             ),
             const SizedBox(height: 30),
             AnimatedBuilder(
-              animation: _fadeAnimation, 
+              animation: _fadeAnimation,
               builder: (context, child) {
                 return FadeTransition(
                   opacity: _fadeAnimation,
@@ -112,17 +110,14 @@ class  _LoadingScreenState extends State<LoadingScreen> with TickerProviderState
 
             const SizedBox(height: 10),
             AnimatedBuilder(
-              animation: _fadeAnimation, 
+              animation: _fadeAnimation,
               builder: (context, child) {
                 return FadeTransition(
                   opacity: _fadeAnimation,
                   child: Text(
                     'Preparando tu experiencia en Monify',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                   ),
                 );
               },
@@ -138,7 +133,7 @@ class  _LoadingScreenState extends State<LoadingScreen> with TickerProviderState
             ),
             const SizedBox(height: 20),
             AnimatedBuilder(
-              animation: _fadeAnimation, 
+              animation: _fadeAnimation,
               builder: (context, child) {
                 return FadeTransition(
                   opacity: _fadeAnimation,

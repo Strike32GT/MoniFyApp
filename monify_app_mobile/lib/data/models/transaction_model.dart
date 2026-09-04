@@ -11,7 +11,6 @@ class TransactionModel {
   final DateTime fecha;
   final CategoryModel? categoryDetalle;
 
-
   TransactionModel({
     required this.id,
     required this.user,
@@ -25,19 +24,18 @@ class TransactionModel {
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     return TransactionModel(
-       id: json['id'],
+      id: json['id'],
       user: json['user'],
       category: json['category'],
       tipo: json['tipo'],
       monto: double.parse(json['monto'].toString()),
       descripcion: json['descripcion'],
       fecha: DateTime.parse(json['fecha']),
-      categoryDetalle: json['category_detalle'] !=null
-      ? CategoryModel.fromJson(json['category_detalle'])
-      : null,
+      categoryDetalle: json['category_detalle'] != null
+          ? CategoryModel.fromJson(json['category_detalle'])
+          : null,
     );
   }
-
 
   TransactionEntity toEntity() {
     return TransactionEntity(

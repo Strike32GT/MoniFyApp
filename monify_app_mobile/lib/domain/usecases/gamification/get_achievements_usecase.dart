@@ -21,31 +21,33 @@ class GetAchievementsUsecase {
     } catch (e) {
       throw Exception('Error al obtener logros: $e');
     }
-  } 
+  }
 
-
-  Future<Map<String,dynamic>> getAchievementProgress() async {
+  Future<Map<String, dynamic>> getAchievementProgress() async {
     try {
       final allAchievements = await _repository.getAchievements();
-      final userAchievements = await _repository.getUserAchievements();  
-
+      final userAchievements = await _repository.getUserAchievements();
 
       final unlockedCount = userAchievements.length;
       final totalCount = allAchievements.length;
-      final progressPercentage = totalCount > 0 ? (unlockedCount / totalCount) * 100 : 0;
+      final progressPercentage = totalCount > 0
+          ? (unlockedCount / totalCount) * 100
+          : 0;
 
       return {
         'unlocked_count': unlockedCount,
         'total_count': totalCount,
         'progress_percentage': progressPercentage,
-        'next_achievement': _getNextAchievement(allAchievements, userAchievements),
+        'next_achievement': _getNextAchievement(
+          allAchievements,
+          userAchievements,
+        ),
         'recently_unlocked': _getRecentlyUnlocked(userAchievements),
       };
     } catch (e) {
       throw Exception('Error al obtener progreso de logros: $e');
     }
   }
-
 
   AchievementEntity? _getNextAchievement(
     List<AchievementEntity> allAchievements,
@@ -62,29 +64,29 @@ class GetAchievementsUsecase {
     return null;
   }
 
-
-  List<AchievementEntity> _getRecentlyUnlocked(List<AchievementEntity> userAchievements) {
+  List<AchievementEntity> _getRecentlyUnlocked(
+    List<AchievementEntity> userAchievements,
+  ) {
     //final now = DateTime.now();
     //final onWeekAgo = now.subtract(Duration(days: 7));
 
     //return userAchievements
-           //.where((achievement) => achievement.fecha != null && 
-                        //achievement.fecha!.isAfter(onWeekAgo))
+    //.where((achievement) => achievement.fecha != null &&
+    //achievement.fecha!.isAfter(onWeekAgo))
     //.toList();
     return [];
   }
-
 
   Future<bool> checkNewAchievements(int userId) async {
     try {
       final currentAchievements = await _repository.getUserAchievements();
       final allAchievements = await _repository.getAchievements();
 
-      final newUnlocked = <AchievementEntity> [];
+      final newUnlocked = <AchievementEntity>[];
 
-      for(final achievement in allAchievements) {
-        if(!_isUnlocked(achievement, currentAchievements)) {
-          if(_shouldUnlockAchievement(achievement, userId)) {
+      for (final achievement in allAchievements) {
+        if (!_isUnlocked(achievement, currentAchievements)) {
+          if (_shouldUnlockAchievement(achievement, userId)) {
             newUnlocked.add(achievement);
           }
         }
@@ -96,35 +98,33 @@ class GetAchievementsUsecase {
     }
   }
 
-
-  bool _isUnlocked(AchievementEntity achievement, List<AchievementEntity> userAchievements) {
+  bool _isUnlocked(
+    AchievementEntity achievement,
+    List<AchievementEntity> userAchievements,
+  ) {
     return userAchievements.any((ua) => ua.id == achievement.id);
   }
-
 
   bool _shouldUnlockAchievement(AchievementEntity achievement, int userId) {
     switch (achievement.nombre.toLowerCase()) {
       case 'primera transaccion':
         return _hasTransactions(userId);
       case 'ahorrador':
-        return _hasPositiveBalance(userId);  
+        return _hasPositiveBalance(userId);
       case 'racha semanal':
         return _hasWeeklystreak(userId);
       default:
-        return false;    
+        return false;
     }
   }
-
 
   bool _hasTransactions(int userId) {
     return false;
   }
 
-
   bool _hasPositiveBalance(int userId) {
     return false;
   }
-
 
   bool _hasWeeklystreak(int userId) {
     return false;

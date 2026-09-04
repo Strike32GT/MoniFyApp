@@ -13,9 +13,7 @@ class NotificationWdgt {
         16,
         0,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       items: notifications.map((notification) {
         return PopupMenuItem(
           value: notification,
@@ -105,8 +103,6 @@ class NotificationWdgt {
     }
   }
 
-
-
   static IconData _getNotificationIcon(NotificationType type) {
     switch (type) {
       case NotificationType.achievement:
@@ -123,23 +119,15 @@ class NotificationWdgt {
   }
 }
 
+enum NotificationType { achievement, warning, success, info, alert }
 
-
-enum NotificationType {
-  achievement,
-  warning,
-  success,
-  info,
-  alert,
-}
- 
 class NotificationItem {
   final String title;
   final String description;
   final String time;
   final NotificationType type;
   bool isRead;
- 
+
   NotificationItem({
     required this.title,
     required this.description,

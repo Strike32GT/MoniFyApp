@@ -10,7 +10,7 @@ class RegisterUseCase {
     final nombre = userData['nombre'] as String?;
     final email = userData['correo'] as String?;
     final password = userData['password'] as String?;
-    if(nombre == null || nombre.trim().isEmpty) {
+    if (nombre == null || nombre.trim().isEmpty) {
       throw ValidationException('El nombre requerido');
     }
 
@@ -19,7 +19,9 @@ class RegisterUseCase {
     }
 
     if (password == null || password.length < 6) {
-      throw ValidationException('El password debe tener 6 caracteres como minimo');
+      throw ValidationException(
+        'El password debe tener 6 caracteres como minimo',
+      );
     }
 
     final user = await _repository.register(userData);
@@ -31,8 +33,7 @@ class RegisterUseCase {
   }
 }
 
-
-class ValidationException  implements Exception {
+class ValidationException implements Exception {
   final String message;
   ValidationException(this.message);
 

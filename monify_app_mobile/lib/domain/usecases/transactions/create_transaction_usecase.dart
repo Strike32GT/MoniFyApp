@@ -7,12 +7,14 @@ class CreateTransactionUsecase {
   CreateTransactionUsecase(this._repository);
 
   Future<TransactionEntity> execute(TransactionEntity transaction) async {
-    if(!_isValidTransaction(transaction)) {
+    if (!_isValidTransaction(transaction)) {
       throw ValidationException('Transaccion invalida');
     }
 
     try {
-      final createdTransacion = await _repository.createTransaction(transaction);
+      final createdTransacion = await _repository.createTransaction(
+        transaction,
+      );
 
       return createdTransacion;
     } catch (e) {
@@ -21,10 +23,11 @@ class CreateTransactionUsecase {
   }
 
   bool _isValidTransaction(TransactionEntity transaction) {
-
     //Validar monto
     if (!transaction.isValidAmount()) {
-      throw ValidationException('El monto debe ser mayor a 0 y no exceder el límite diario');
+      throw ValidationException(
+        'El monto debe ser mayor a 0 y no exceder el límite diario',
+      );
     }
 
     //Validar el tipo de transaccion
@@ -32,14 +35,15 @@ class CreateTransactionUsecase {
       throw ValidationException('Tipo de transaccion invalido.');
     }
 
-
     //Validar la descripcion si son montos grandes
     if (transaction.tipo == 'gasto' && transaction.monto > 10000) {
-      if (transaction.descripcion == null || transaction.descripcion!.trim().isEmpty) {
-        throw ValidationException('Los gastos mayores a S/10000 requieren una descripcion');
+      if (transaction.descripcion == null ||
+          transaction.descripcion!.trim().isEmpty) {
+        throw ValidationException(
+          'Los gastos mayores a S/10000 requieren una descripcion',
+        );
       }
     }
-
 
     //Validar que la fecha no sea futura
     if (transaction.fecha.isAfter(DateTime.now())) {
@@ -50,12 +54,9 @@ class CreateTransactionUsecase {
   }
 }
 
-
-
 class ValidationException implements Exception {
   final String message;
   ValidationException(this.message);
-
 
   @override
   String toString() => message;

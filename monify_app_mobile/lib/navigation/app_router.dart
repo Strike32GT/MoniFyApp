@@ -68,11 +68,8 @@ class AppRouter {
 
       default:
         return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(
-              child: Text('Ruta no encontrada'),
-            ),
-          ),
+          builder: (_) =>
+              const Scaffold(body: Center(child: Text('Ruta no encontrada'))),
           settings: settings,
         );
     }

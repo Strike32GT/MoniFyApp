@@ -49,23 +49,19 @@ class GetTransactionsUsecase {
           .toList();
     }
 
-
     //Filtro por tipo(ingreso/gasto)
     if (type != null && type.isNotEmpty) {
       filtered = filtered.where((t) => t.tipo == type).toList();
     }
 
-    
     //Filtro por rango de fechas
     if (startDate != null) {
       filtered = filtered.where((t) => t.fecha.isAfter(startDate)).toList();
     }
 
-
     if (endDate != null) {
       filtered = filtered.where((t) => t.fecha.isBefore(endDate)).toList();
     }
-
 
     if (limit != null && limit > 0) {
       filtered = filtered.take(limit).toList();

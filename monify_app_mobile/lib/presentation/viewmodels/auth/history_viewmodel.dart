@@ -62,7 +62,9 @@ class HistoryViewModel extends ChangeNotifier {
         fecha: DateTime.now(),
       );
 
-      final newTransaction = await _createTransactionUsecase.execute(transaction);
+      final newTransaction = await _createTransactionUsecase.execute(
+        transaction,
+      );
       _transactions.insert(0, newTransaction);
       _applyFilters();
     } catch (e) {
@@ -96,7 +98,8 @@ class HistoryViewModel extends ChangeNotifier {
       var matchesSearch = true;
       if (_searchQuery.isNotEmpty) {
         matchesSearch =
-            transaction.descripcion?.toLowerCase().contains(_searchQuery) == true ||
+            transaction.descripcion?.toLowerCase().contains(_searchQuery) ==
+                true ||
             transaction.monto.toString().contains(_searchQuery);
       }
 

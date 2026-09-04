@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:monify_app_mobile/data/services/api_service.dart';
+import 'package:monify_app_mobile/data/services/local_app_store.dart';
 import 'package:monify_app_mobile/screens/Loading.dart';
 import 'package:monify_app_mobile/screens/auth/CreateAccount.dart';
+import 'package:monify_app_mobile/themes/normal_theme.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,10 +12,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final ApiService _apiService = ApiService();
-
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _showLoginForm = false;
   bool _isPasswordVisible = false;
   bool _isLoading = false;
   String? _errorMessage;
@@ -22,395 +22,226 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildTopSection(),
-            _buildLoginForm(),
-          ],
+      backgroundColor: NormalTheme.background,
+      body: SafeArea(
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          child: _showLoginForm ? _buildLoginForm() : _buildWelcome(),
         ),
       ),
     );
   }
 
-  Widget _buildTopSection() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.only(top: 80, bottom: 40),
-      color: Colors.white,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildWelcome() => SingleChildScrollView(
+    key: const ValueKey('welcome'),
+    padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+    child: Column(
+      children: [
+        const Align(alignment: Alignment.centerLeft, child: _BrandName()),
+        const SizedBox(height: 28),
+        Image.asset(
+          'assets/Monify_Logo_Recortado.png',
+          height: 220,
+          semanticLabel: 'Logo de Monify',
+        ),
+        const SizedBox(height: 12),
+        const Text(
+          'Tus finanzas,\nmás felices.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 32,
+            height: 1.08,
+            fontWeight: FontWeight.w800,
+            color: NormalTheme.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          'Organiza tus gastos y avanza hacia tus metas.',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 15, color: NormalTheme.textSecondary),
+        ),
+        const SizedBox(height: 30),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(22),
+          decoration: BoxDecoration(
+            color: NormalTheme.gold,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: NormalTheme.gold.withOpacity(.30),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.green[600],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.monetization_on,
-                  color: Colors.white,
-                  size: 30,
+              const Text(
+                '¡Bienvenido a Monify!',
+                style: TextStyle(fontSize: 21, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 5),
+              const Text(
+                'Elige cómo quieres continuar.',
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 18),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: () => setState(() => _showLoginForm = true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: NormalTheme.primaryGreenDark,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Iniciar sesión'),
                 ),
               ),
-              const SizedBox(width: 10),
-              Text(
-                'Monify',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green[700],
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: OutlinedButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CreateAccount()),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: NormalTheme.textPrimary,
+                    side: const BorderSide(color: Colors.white, width: 1.5),
+                    backgroundColor: Colors.white,
+                  ),
+                  child: const Text('Crear una cuenta'),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Text(
-            'Controla tus gastos en segundos',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoginForm() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      padding: const EdgeInsets.all(25),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Bienvenido',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Ingresa a tu cuenta para continuar',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 30),
-          _buildEmailInputField(),
-          const SizedBox(height: 20),
-          _buildPasswordInputField(),
-          const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: _isLoading ? null : () {},
-              child: Text(
-                'Olvidaste tu password?',
-                style: TextStyle(color: Colors.green[600]),
-              ),
-            ),
-          ),
-          if (_errorMessage != null) ...[
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              margin: const EdgeInsets.only(bottom: 10),
-              decoration: BoxDecoration(
-                color: Colors.red[50],
-                border: Border.all(color: Colors.red[200]!),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                _errorMessage!,
-                style: TextStyle(color: Colors.red[700]),
-              ),
-            ),
-          ],
-          const SizedBox(height: 20),
-          _buildLoginButton(),
-          const SizedBox(height: 20),
-          _buildSignUpSection(),
-          const SizedBox(height: 30),
-          _buildDemoInfo(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmailInputField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Correo electronico',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _emailController,
-          keyboardType: TextInputType.emailAddress,
-          enabled: !_isLoading,
-          decoration: InputDecoration(
-            hintText: 'tu@email.com',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.green[600]!),
-            ),
-            prefixIcon: const Icon(Icons.email, color: Colors.grey),
-          ),
         ),
       ],
-    );
-  }
+    ),
+  );
 
-  Widget _buildPasswordInputField() {
-    return Column(
+  Widget _buildLoginForm() => SingleChildScrollView(
+    key: const ValueKey('loginForm'),
+    padding: const EdgeInsets.fromLTRB(24, 14, 24, 32),
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        IconButton(
+          onPressed: _isLoading
+              ? null
+              : () => setState(() => _showLoginForm = false),
+          icon: const Icon(Icons.arrow_back_rounded),
+          tooltip: 'Volver',
+        ),
+        const SizedBox(height: 16),
+        const _BrandName(),
+        const SizedBox(height: 28),
         const Text(
-          'Contrasena',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
+          'Hola de nuevo',
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 8),
-        TextField(
+        const Text(
+          'Ingresa tus datos para continuar con tus finanzas.',
+          style: TextStyle(fontSize: 15, color: NormalTheme.textSecondary),
+        ),
+        const SizedBox(height: 28),
+        _AuthField(
+          controller: _emailController,
+          label: 'Correo electrónico',
+          hint: 'nombre@correo.com',
+          icon: Icons.mail_outline_rounded,
+          keyboardType: TextInputType.emailAddress,
+          enabled: !_isLoading,
+        ),
+        const SizedBox(height: 16),
+        _AuthField(
           controller: _passwordController,
+          label: 'Contraseña',
+          hint: '••••••••',
+          icon: Icons.lock_outline_rounded,
           obscureText: !_isPasswordVisible,
           enabled: !_isLoading,
           onSubmitted: (_) => _login(),
-          decoration: InputDecoration(
-            hintText: '********',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+          suffix: IconButton(
+            icon: Icon(
+              _isPasswordVisible
+                  ? Icons.visibility_off_outlined
+                  : Icons.visibility_outlined,
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.green[600]!),
-            ),
-            prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
-            ),
+            onPressed: () =>
+                setState(() => _isPasswordVisible = !_isPasswordVisible),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildLoginButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _login,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green[600],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        child: _isLoading
-            ? const SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : const Text(
-                'Iniciar Sesion',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-      ),
-    );
-  }
-
-  Widget _buildSignUpSection() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'No tienes cuenta?',
-          style: TextStyle(color: Colors.grey[600]),
-        ),
-        TextButton(
-          onPressed: _isLoading
-              ? null
-              : () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CreateAccount(),
-                    ),
-                  );
-                },
-          child: Text(
-            'Registrate',
-            style: TextStyle(
-              color: Colors.green[600],
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDemoInfo() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.green[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.green[200]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.info, color: Colors.green[600], size: 20),
-              const SizedBox(width: 8),
-              const Text(
-                'Inicio de sesion',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Ingresa tu correo y tu contrasena registrados.',
-            style: TextStyle(
-              color: Colors.grey[700],
-              fontSize: 12,
-            ),
-          ),
+        if (_errorMessage != null) ...[
+          const SizedBox(height: 16),
+          _MessageBox(message: _errorMessage!),
         ],
-      ),
-    );
-  }
+        const SizedBox(height: 28),
+        SizedBox(
+          width: double.infinity,
+          height: 54,
+          child: ElevatedButton(
+            onPressed: _isLoading ? null : _login,
+            child: _isLoading
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Text('Iniciar sesión'),
+          ),
+        ),
+        const SizedBox(height: 18),
+        Center(
+          child: TextButton(
+            onPressed: _isLoading
+                ? null
+                : () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CreateAccount()),
+                  ),
+            child: const Text('¿Aún no tienes una cuenta? Regístrate'),
+          ),
+        ),
+      ],
+    ),
+  );
 
   Future<void> _login() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
-
     if (email.isEmpty || password.isEmpty) {
-      setState(() {
-        _errorMessage = 'Por favor, completa todos los campos';
-      });
+      setState(() => _errorMessage = 'Completa tu correo y contraseña.');
       return;
     }
-
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
-
     try {
-      final response = await _apiService.post('/users/login/', {
-        'correo': email,
-        'password': password,
-      });
-
-      final tokens = response['tokens'] as Map<String, dynamic>?;
-      final user = response['user'] as Map<String, dynamic>?;
-
-      if (tokens == null || user == null) {
-        throw Exception('Respuesta invalida del servidor');
-      }
-
-      final accessToken = tokens['access']?.toString();
-      if (accessToken == null || accessToken.isEmpty) {
-        throw Exception('No se recibio token de acceso');
-      }
-
-      _apiService.setAuthToken(accessToken);
-
-      if (!mounted) {
-        return;
-      }
-
-      final userName = user['nombre']?.toString() ?? 'Usuario';
-      final userEmail = user['correo']?.toString() ?? '';
-
-
+      final user = await LocalAppStore.instance.login(email, password);
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => LoadingScreen(userName: userName, userEmail: userEmail),
+          builder: (_) =>
+              LoadingScreen(userName: user.nombre, userEmail: user.correo),
         ),
       );
-    } catch (e) {
-      if (!mounted) {
-        return;
-      }
-
-      final errorText = e.toString().toLowerCase();
-
-      setState(() {
-        if (errorText.contains('400') ||
-            errorText.contains('401') ||
-            errorText.contains('credenciales') ||
-            errorText.contains('no active account') ||
-            errorText.contains('cuenta')) {
-          _errorMessage = 'Cuenta no existente o contrasena incorrecta';
-        } else {
-          _errorMessage = e.toString().replaceFirst('Exception: ', '');
-        }
-      });
+    } catch (_) {
+      if (mounted)
+        setState(() => _errorMessage = 'Correo o contraseña incorrectos.');
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -420,4 +251,93 @@ class _LoginPageState extends State<LoginPage> {
     _passwordController.dispose();
     super.dispose();
   }
+}
+
+class _BrandName extends StatelessWidget {
+  const _BrandName();
+  @override
+  Widget build(BuildContext context) => const Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(Icons.savings_rounded, color: NormalTheme.primaryGreen, size: 28),
+      SizedBox(width: 8),
+      Text(
+        'Monify',
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w800,
+          color: NormalTheme.primaryGreenDark,
+        ),
+      ),
+    ],
+  );
+}
+
+class _AuthField extends StatelessWidget {
+  const _AuthField({
+    required this.controller,
+    required this.label,
+    required this.hint,
+    required this.icon,
+    this.keyboardType,
+    this.obscureText = false,
+    this.enabled = true,
+    this.suffix,
+    this.onSubmitted,
+  });
+  final TextEditingController controller;
+  final String label;
+  final String hint;
+  final IconData icon;
+  final TextInputType? keyboardType;
+  final bool obscureText;
+  final bool enabled;
+  final Widget? suffix;
+  final ValueChanged<String>? onSubmitted;
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
+      const SizedBox(height: 8),
+      TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        obscureText: obscureText,
+        enabled: enabled,
+        onSubmitted: onSubmitted,
+        decoration: InputDecoration(
+          hintText: hint,
+          prefixIcon: Icon(icon),
+          suffixIcon: suffix,
+        ),
+      ),
+    ],
+  );
+}
+
+class _MessageBox extends StatelessWidget {
+  const _MessageBox({required this.message});
+  final String message;
+  @override
+  Widget build(BuildContext context) => Container(
+    width: double.infinity,
+    padding: const EdgeInsets.all(13),
+    decoration: BoxDecoration(
+      color: NormalTheme.dangerSoft,
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: Row(
+      children: [
+        const Icon(Icons.error_outline_rounded, color: NormalTheme.danger),
+        const SizedBox(width: 9),
+        Expanded(
+          child: Text(
+            message,
+            style: const TextStyle(color: NormalTheme.danger),
+          ),
+        ),
+      ],
+    ),
+  );
 }
