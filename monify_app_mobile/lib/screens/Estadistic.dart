@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:monify_app_mobile/themes/dark_theme.dart';
 import 'package:monify_app_mobile/themes/normal_theme.dart';
 
@@ -350,13 +353,13 @@ class _EstadisticPageState extends State<EstadisticPage> {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildBar(context, 'Lun', 28.0, NormalTheme.primaryGreen),
-          _buildBar(context, 'Mar', 55.0, NormalTheme.lime),
-          _buildBar(context, 'Mie', 36.0, NormalTheme.primaryGreen),
-          _buildBar(context, 'Jue', 62.0, NormalTheme.danger),
-          _buildBar(context, 'Vie', 44.0, NormalTheme.gold),
-          _buildBar(context, 'Sab', 54.0, NormalTheme.lime),
-          _buildBar(context, 'Dom', 34.0, NormalTheme.primaryGreen),
+          _buildBar(context, 'Lun', 28.0, NormalTheme.primaryGreen, 0),
+          _buildBar(context, 'Mar', 55.0, NormalTheme.lime, 1),
+          _buildBar(context, 'Mie', 36.0, NormalTheme.primaryGreen, 2),
+          _buildBar(context, 'Jue', 62.0, NormalTheme.danger, 3),
+          _buildBar(context, 'Vie', 44.0, NormalTheme.gold, 4),
+          _buildBar(context, 'Sab', 54.0, NormalTheme.lime, 5),
+          _buildBar(context, 'Dom', 34.0, NormalTheme.primaryGreen, 6),
         ],
       ),
     );
@@ -367,6 +370,7 @@ class _EstadisticPageState extends State<EstadisticPage> {
     String day,
     double value,
     Color color,
+    int index,
   ) {
     final theme = Theme.of(context);
     const maxValue = 62.0;
@@ -374,15 +378,27 @@ class _EstadisticPageState extends State<EstadisticPage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 400),
-          width: 26,
-          height: (value / maxValue) * 150,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
+        Container(
+              width: 26,
+              height: (value / maxValue) * 150,
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            )
+            .animate(delay: (index * 85).ms)
+            .scaleY(
+              begin: 0,
+              end: 1,
+              alignment: Alignment.bottomCenter,
+              duration: 520.ms,
+              curve: Curves.easeOutCubic,
+            )
+            .shimmer(
+              delay: (index * 85 + 430).ms,
+              duration: 420.ms,
+              color: Colors.white.withOpacity(.45),
+            ),
         const SizedBox(height: 10),
         Text(day, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12)),
       ],
@@ -473,55 +489,7 @@ class _EstadisticPageState extends State<EstadisticPage> {
     final theme = Theme.of(context);
 
     return Center(
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: SweepGradient(
-                colors: [
-                  NormalTheme.primaryGreen,
-                  NormalTheme.primaryGreen,
-                  NormalTheme.lime,
-                  NormalTheme.lime,
-                  NormalTheme.gold,
-                  NormalTheme.gold,
-                  Colors.purple[600]!,
-                  Colors.purple[600]!,
-                ],
-                stops: const [0.0, 0.3, 0.3, 0.5, 0.5, 0.75, 0.75, 1.0],
-              ),
-            ),
-          ),
-          Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              color: theme.cardColor,
-              shape: BoxShape.circle,
-            ),
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'S/1250',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'Total',
-                style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
-              ),
-            ],
-          ),
-        ],
-      ),
+      child: _AnimatedExpenseDonut(backgroundColor: theme.cardColor),
     );
   }
 
@@ -574,4 +542,115 @@ class _EstadisticPageState extends State<EstadisticPage> {
       ],
     );
   }
+}
+
+class _AnimatedExpenseDonut extends StatelessWidget {
+  const _AnimatedExpenseDonut({required this.backgroundColor});
+
+  final Color backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    const total = 1250;
+
+    return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: 1000.ms,
+          curve: Curves.easeOutCubic,
+          builder: (context, progress, _) => Stack(
+            alignment: Alignment.center,
+            children: [
+              RepaintBoundary(
+                child: CustomPaint(
+                  size: const Size.square(150),
+                  painter: _ExpenseDonutPainter(progress: progress),
+                ),
+              ),
+              Container(
+                width: 90,
+                height: 90,
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'S/${(total * progress).round()}',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Total',
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(fontSize: 12),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        )
+        .animate()
+        .fadeIn(duration: 180.ms)
+        .scale(
+          begin: const Offset(.88, .88),
+          end: const Offset(1, 1),
+          duration: 280.ms,
+          curve: Curves.easeOutBack,
+        );
+  }
+}
+
+class _ExpenseDonutPainter extends CustomPainter {
+  const _ExpenseDonutPainter({required this.progress});
+
+  final double progress;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final rect = Rect.fromCircle(center: center, radius: size.width / 2 - 15);
+    final track = Paint()
+      ..color = const Color(0x1F657068)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 24;
+    canvas.drawCircle(center, rect.width / 2, track);
+
+    const segments = [
+      (NormalTheme.primaryGreen, .30),
+      (NormalTheme.lime, .20),
+      (NormalTheme.gold, .25),
+      (Color(0xFFAB47BC), .25),
+    ];
+    var start = -math.pi / 2;
+    var remaining = math.pi * 2 * progress;
+    for (final segment in segments) {
+      final sweep = math.pi * 2 * segment.$2;
+      final visibleSweep = remaining.clamp(0, sweep).toDouble();
+      if (visibleSweep > 0) {
+        canvas.drawArc(
+          rect,
+          start,
+          visibleSweep,
+          false,
+          Paint()
+            ..color = segment.$1
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 24
+            ..strokeCap = StrokeCap.butt,
+        );
+      }
+      start += sweep;
+      remaining -= sweep;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ExpenseDonutPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }
