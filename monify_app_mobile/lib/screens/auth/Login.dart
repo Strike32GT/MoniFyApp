@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:rive/rive.dart';
 import 'package:monify_app_mobile/data/services/local_app_store.dart';
-import 'package:monify_app_mobile/screens/Loading.dart';
 import 'package:monify_app_mobile/screens/auth/CreateAccount.dart';
+import 'package:monify_app_mobile/screens/home.dart';
 import 'package:monify_app_mobile/themes/normal_theme.dart';
 
 class LoginPage extends StatefulWidget {
@@ -24,17 +25,14 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: NormalTheme.background,
       body: SafeArea(
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 250),
-          child: _showLoginForm ? _buildLoginForm() : _buildWelcome(),
-        ),
+        child: _showLoginForm ? _buildLoginForm() : _buildWelcome(),
       ),
     );
   }
 
   Widget _buildWelcome() => SingleChildScrollView(
     key: const ValueKey('welcome'),
-    padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+    padding: const EdgeInsets.fromLTRB(24, 40, 24, 32),
     child: Column(
       children: [
         const SizedBox(height: 28),
@@ -92,7 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: () => setState(() => _showLoginForm = true),
+                  onPressed: _openLoginForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: NormalTheme.primaryGreenDark,
                     foregroundColor: Colors.white,
@@ -126,14 +124,12 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildLoginForm() => SingleChildScrollView(
     key: const ValueKey('loginForm'),
-    padding: const EdgeInsets.fromLTRB(24, 14, 24, 32),
+    padding: const EdgeInsets.fromLTRB(24, 30, 24, 32),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         IconButton(
-          onPressed: _isLoading
-              ? null
-              : () => setState(() => _showLoginForm = false),
+          onPressed: _isLoading ? null : _returnToWelcome,
           icon: const Icon(Icons.arrow_back_rounded),
           tooltip: 'Volver',
         ),
@@ -210,9 +206,32 @@ class _LoginPageState extends State<LoginPage> {
             child: const Text('¿Aún no tienes una cuenta? Regístrate'),
           ),
         ),
+        const SizedBox(height: 24),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final coinHeight = (constraints.maxWidth * .56).clamp(190.0, 250.0);
+            return SizedBox(
+              key: const ValueKey('coin-rive-animation'),
+              width: double.infinity,
+              height: coinHeight,
+              child: Semantics(
+                label: 'Moneda animada de Monify',
+                child: const RepaintBoundary(child: _CoinRiveAnimation()),
+              ),
+            );
+          },
+        ),
       ],
     ),
   );
+
+  void _openLoginForm() {
+    setState(() => _showLoginForm = true);
+  }
+
+  void _returnToWelcome() {
+    setState(() => _showLoginForm = false);
+  }
 
   Future<void> _login() async {
     final email = _emailController.text.trim();
@@ -228,16 +247,19 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final user = await LocalAppStore.instance.login(email, password);
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) =>
-              LoadingScreen(userName: user.nombre, userEmail: user.correo),
+      Navigator.of(context).pushAndRemoveUntil(
+        PageRouteBuilder<void>(
+          pageBuilder: (_, _, _) =>
+              Home(userName: user.nombre, userEmail: user.correo),
+          transitionDuration: Duration.zero,
+          reverseTransitionDuration: Duration.zero,
         ),
+        (_) => false,
       );
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         setState(() => _errorMessage = 'Correo o contraseña incorrectos.');
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -248,6 +270,79 @@ class _LoginPageState extends State<LoginPage> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+}
+
+class _CoinRiveAnimation extends StatefulWidget {
+  const _CoinRiveAnimation();
+
+  @override
+  State<_CoinRiveAnimation> createState() => _CoinRiveAnimationState();
+}
+
+class _CoinRiveAnimationState extends State<_CoinRiveAnimation> {
+  Artboard? _artboard;
+  SingleAnimationPainter? _painter;
+  File? _riveFile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCoin();
+  }
+
+  Future<void> _loadCoin() async {
+    try {
+      final file = await File.asset(
+        'assets/river/coin.riv',
+        riveFactory: Factory.flutter,
+      );
+      if (file == null) return;
+      final artboard = file.defaultArtboard();
+      if (artboard == null) {
+        file.dispose();
+        return;
+      }
+      final painter = SingleAnimationPainter('anim19', fit: Fit.contain);
+      if (!mounted) {
+        painter.dispose();
+        artboard.dispose();
+        file.dispose();
+        return;
+      }
+
+      setState(() {
+        _riveFile = file;
+        _artboard = artboard;
+        _painter = painter;
+      });
+    } catch (_) {}
+  }
+
+  @override
+  void dispose() {
+    _painter?.dispose();
+    _artboard?.dispose();
+    _riveFile?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final artboard = _artboard;
+    final painter = _painter;
+    if (artboard == null || painter == null) {
+      return const Center(
+        child: Icon(
+          Icons.monetization_on_rounded,
+          size: 118,
+          color: NormalTheme.gold,
+          semanticLabel: 'Moneda de Monify',
+        ),
+      );
+    }
+
+    return RiveArtboardWidget(artboard: artboard, painter: painter);
   }
 }
 

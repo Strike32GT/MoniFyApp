@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:monify_app_mobile/screens/widgets/Configuration.dart';
 import 'package:monify_app_mobile/themes/dark_theme.dart';
+import 'package:monify_app_mobile/themes/normal_theme.dart';
 
 class ProfilePage extends StatelessWidget {
   final String userName;
@@ -206,23 +208,18 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(999),
-              child: LinearProgressIndicator(
-                value: 0.625,
-                minHeight: 8,
-                backgroundColor: Colors.white.withOpacity(0.24),
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color(0xFFFFC928),
-                ),
-              ),
+            _AnimatedProgressBar(
+              value: .625,
+              color: const Color(0xFFFFC928),
+              backgroundColor: Colors.white.withOpacity(.24),
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '1,250 / 2,000 XP',
+                _AnimatedExperienceLabel(
+                  currentXp: 1250,
+                  totalXp: 2000,
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.95),
                     fontSize: 12,
@@ -295,11 +292,28 @@ class ProfilePage extends StatelessWidget {
                       color: Colors.orange[100],
                       borderRadius: BorderRadius.circular(22),
                     ),
-                    child: Icon(
-                      Icons.local_fire_department,
-                      color: Colors.orange[600],
-                      size: 38,
-                    ),
+                    child:
+                        Icon(
+                              Icons.local_fire_department,
+                              color: Colors.orange[600],
+                              size: 38,
+                            )
+                            .animate(
+                              onPlay: (controller) =>
+                                  controller.repeat(reverse: true),
+                            )
+                            .moveY(
+                              begin: 2,
+                              end: -2,
+                              duration: 520.ms,
+                              curve: Curves.easeInOut,
+                            )
+                            .scale(
+                              begin: const Offset(.88, 1.08),
+                              end: const Offset(1.1, .92),
+                              duration: 520.ms,
+                              curve: Curves.easeInOut,
+                            ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -404,13 +418,13 @@ class ProfilePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildDayCircle(context, 'L', true),
-                  _buildDayCircle(context, 'M', true),
-                  _buildDayCircle(context, 'X', true),
-                  _buildDayCircle(context, 'J', true),
-                  _buildDayCircle(context, 'V', true),
-                  _buildDayCircle(context, 'S', false),
-                  _buildDayCircle(context, 'D', false),
+                  _buildDayCircle(context, 'L', true, 0),
+                  _buildDayCircle(context, 'M', true, 1),
+                  _buildDayCircle(context, 'X', true, 2),
+                  _buildDayCircle(context, 'J', true, 3),
+                  _buildDayCircle(context, 'V', true, 4),
+                  _buildDayCircle(context, 'S', false, 5),
+                  _buildDayCircle(context, 'D', false, 6),
                 ],
               ),
               if (isDark) ...[
@@ -427,32 +441,56 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _buildDayCircle(BuildContext context, String day, bool completed) {
+  Widget _buildDayCircle(
+    BuildContext context,
+    String day,
+    bool completed,
+    int index,
+  ) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final inactiveColor = isDark ? const Color(0xFF354158) : Colors.grey[300]!;
 
     return Column(
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: completed ? Colors.green[600] : inactiveColor,
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: completed
-                ? const Icon(Icons.check, color: Colors.white, size: 20)
-                : const Icon(Icons.close, color: Colors.white, size: 20),
-          ),
-        ),
-        if (isDark) ...[
-          const SizedBox(height: 6),
-          Text(day, style: theme.textTheme.bodyMedium?.copyWith(fontSize: 11)),
-        ],
-      ],
-    );
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: completed ? Colors.green[600] : inactiveColor,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: completed
+                    ? const Icon(Icons.check, color: Colors.white, size: 20)
+                          .animate(delay: (index * 230 + 120).ms)
+                          .fadeIn(duration: 130.ms)
+                          .scale(
+                            begin: const Offset(.2, .2),
+                            end: const Offset(1, 1),
+                            duration: 200.ms,
+                            curve: Curves.easeOutBack,
+                          )
+                    : const Icon(Icons.close, color: Colors.white, size: 20),
+              ),
+            ),
+            if (isDark) ...[
+              const SizedBox(height: 6),
+              Text(
+                day,
+                style: theme.textTheme.bodyMedium?.copyWith(fontSize: 11),
+              ),
+            ],
+          ],
+        )
+        .animate(delay: (index * 230).ms)
+        .fadeIn(duration: 180.ms)
+        .scale(
+          begin: const Offset(.65, .65),
+          end: const Offset(1, 1),
+          duration: 260.ms,
+          curve: Curves.easeOutBack,
+        );
   }
 
   Widget _buildAchievementsSection(BuildContext context) {
@@ -493,6 +531,7 @@ class ProfilePage extends StatelessWidget {
           progress: 0.75,
           progressText: 'S/150 / S/200',
           color: Colors.blue[600]!,
+          delay: 80.ms,
         ),
         const SizedBox(height: 12),
         _buildChallengeCard(
@@ -502,6 +541,7 @@ class ProfilePage extends StatelessWidget {
           progress: 0.6,
           progressText: '3 o 5 dias',
           color: Colors.orange[600]!,
+          delay: 160.ms,
         ),
       ],
     );
@@ -514,69 +554,110 @@ class ProfilePage extends StatelessWidget {
     required double progress,
     required String progressText,
     required Color color,
+    required Duration delay,
   }) {
     final theme = Theme.of(context);
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.12),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.flag, color: color, size: 20),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: color.withOpacity(0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.flag, color: color, size: 20)
+                          .animate(
+                            onPlay: (controller) =>
+                                controller.repeat(reverse: true),
+                          )
+                          .rotate(
+                            begin: -.035,
+                            end: .035,
+                            duration: 900.ms,
+                            curve: Curves.easeInOut,
+                          )
+                          .moveY(
+                            begin: 1,
+                            end: -1,
+                            duration: 900.ms,
+                            curve: Curves.easeInOut,
+                          ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: theme.textTheme.titleMedium?.copyWith(fontSize: 16),
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: theme.textTheme.bodyMedium?.copyWith(fontSize: 14),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: theme.dividerColor,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: FractionallySizedBox(
+                    alignment: Alignment.centerLeft,
+                    widthFactor: progress,
+                    child:
+                        Container(
+                              decoration: BoxDecoration(
+                                color: NormalTheme.gold,
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                            )
+                            .animate(delay: delay)
+                            .scaleX(
+                              begin: 0,
+                              end: 1,
+                              alignment: Alignment.centerLeft,
+                              duration: 420.ms,
+                              curve: Curves.easeOutCubic,
+                            )
+                            .shimmer(
+                              delay: delay + 420.ms,
+                              duration: 550.ms,
+                              color: Colors.white.withOpacity(.5),
+                            ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  progressText,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: theme.textTheme.bodyMedium?.copyWith(fontSize: 14),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              height: 6,
-              decoration: BoxDecoration(
-                color: theme.dividerColor,
-                borderRadius: BorderRadius.circular(3),
-              ),
-              child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
-                widthFactor: progress,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              progressText,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        )
+        .animate(delay: delay)
+        .fadeIn(duration: 220.ms)
+        .slideY(
+          begin: .08,
+          end: 0,
+          duration: 220.ms,
+          curve: Curves.easeOutCubic,
+        );
   }
 
   Widget _buildBadges(BuildContext context) {
@@ -646,44 +727,214 @@ class ProfilePage extends StatelessWidget {
     Color color,
     bool isUnlocked,
   ) {
+    return _InteractiveBadge(
+      icon: icon,
+      title: title,
+      color: color,
+      isUnlocked: isUnlocked,
+    );
+  }
+}
+
+class _AnimatedProgressBar extends StatelessWidget {
+  const _AnimatedProgressBar({
+    required this.value,
+    required this.color,
+    required this.backgroundColor,
+  });
+
+  final double value;
+  final Color color;
+  final Color backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: value),
+      duration: 900.ms,
+      curve: Curves.easeOutCubic,
+      builder: (context, progress, _) => ClipRRect(
+        borderRadius: BorderRadius.circular(999),
+        child: SizedBox(
+          height: 8,
+          child: Stack(
+            children: [
+              Positioned.fill(child: ColoredBox(color: backgroundColor)),
+              FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: progress,
+                child: ColoredBox(color: color),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).animate().shimmer(
+      delay: 620.ms,
+      duration: 600.ms,
+      color: Colors.white.withOpacity(.65),
+    );
+  }
+}
+
+class _AnimatedExperienceLabel extends StatelessWidget {
+  const _AnimatedExperienceLabel({
+    required this.currentXp,
+    required this.totalXp,
+    required this.style,
+  });
+
+  final int currentXp;
+  final int totalXp;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<int>(
+      tween: IntTween(begin: 0, end: currentXp),
+      duration: 900.ms,
+      curve: Curves.easeOutCubic,
+      builder: (context, xp, _) => Text('$xp / $totalXp XP', style: style),
+    );
+  }
+}
+
+class _InteractiveBadge extends StatefulWidget {
+  const _InteractiveBadge({
+    required this.icon,
+    required this.title,
+    required this.color,
+    required this.isUnlocked,
+  });
+
+  final IconData icon;
+  final String title;
+  final Color color;
+  final bool isUnlocked;
+
+  @override
+  State<_InteractiveBadge> createState() => _InteractiveBadgeState();
+}
+
+class _InteractiveBadgeState extends State<_InteractiveBadge> {
+  var _tapCount = 0;
+
+  void _showBadgeStatus() {
+    setState(() => _tapCount++);
+    final text = widget.isUnlocked
+        ? '${widget.title}: logro desbloqueado'
+        : '${widget.title}: continúa avanzando para desbloquearlo';
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(text)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final hasSparkle =
+        widget.isUnlocked &&
+        (widget.icon == Icons.star || widget.icon == Icons.emoji_events);
 
-    return Column(
-      children: [
-        Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: isUnlocked
-                ? color.withOpacity(isDark ? 0.18 : 0.12)
-                : theme.dividerColor,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: isUnlocked ? color : theme.dividerColor,
-              width: 2,
+    return Semantics(
+          button: true,
+          label:
+              '${widget.title}. ${widget.isUnlocked ? 'Desbloqueado' : 'Bloqueado'}',
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: _showBadgeStatus,
+              borderRadius: BorderRadius.circular(40),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: widget.isUnlocked
+                            ? widget.color.withOpacity(isDark ? 0.18 : 0.12)
+                            : theme.dividerColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: widget.isUnlocked
+                              ? widget.color
+                              : theme.dividerColor,
+                          width: 2,
+                        ),
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Icon(
+                                widget.icon,
+                                color: widget.isUnlocked
+                                    ? widget.color
+                                    : theme.textTheme.bodyMedium?.color
+                                          ?.withOpacity(0.55),
+                                size: 30,
+                              )
+                              .animate(
+                                onPlay: hasSparkle
+                                    ? (controller) =>
+                                          controller.repeat(reverse: true)
+                                    : null,
+                              )
+                              .shimmer(
+                                duration: 1500.ms,
+                                color: Colors.white.withOpacity(.8),
+                              ),
+                          if (hasSparkle)
+                            Positioned(
+                              top: 7,
+                              right: 7,
+                              child:
+                                  Icon(
+                                        Icons.auto_awesome,
+                                        color: Colors.white.withOpacity(.9),
+                                        size: 12,
+                                      )
+                                      .animate(
+                                        onPlay: (controller) =>
+                                            controller.repeat(reverse: true),
+                                      )
+                                      .fadeIn(duration: 700.ms)
+                                      .scale(
+                                        begin: const Offset(.65, .65),
+                                        end: const Offset(1.15, 1.15),
+                                        duration: 700.ms,
+                                      ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      widget.title,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: widget.isUnlocked
+                            ? theme.textTheme.bodyLarge?.color
+                            : theme.textTheme.bodyMedium?.color,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-          child: Icon(
-            icon,
-            color: isUnlocked
-                ? color
-                : theme.textTheme.bodyMedium?.color?.withOpacity(0.55),
-            size: 30,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: isUnlocked
-                ? theme.textTheme.bodyLarge?.color
-                : theme.textTheme.bodyMedium?.color,
-          ),
-        ),
-      ],
-    );
+        )
+        .animate(key: ValueKey(_tapCount))
+        .scale(
+          begin: const Offset(.92, .92),
+          end: const Offset(1, 1),
+          duration: 180.ms,
+          curve: Curves.easeOutBack,
+        )
+        .then()
+        .shake(duration: 180.ms, hz: 3);
   }
 }

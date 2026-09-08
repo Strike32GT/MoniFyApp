@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
 import 'package:monify_app_mobile/screens/Estadistic.dart';
 import 'package:monify_app_mobile/screens/historial.dart';
@@ -111,7 +112,14 @@ class _HomeState extends State<Home> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 28, color: isActive ? activeColor : inactiveColor),
+            Icon(icon, size: 28, color: isActive ? activeColor : inactiveColor)
+                .animate(key: ValueKey('$index-$isActive'))
+                .scale(
+                  begin: const Offset(.86, .86),
+                  end: const Offset(1, 1),
+                  duration: 160.ms,
+                  curve: Curves.easeOutBack,
+                ),
             const SizedBox(height: 5),
             Text(
               label,
@@ -152,7 +160,14 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        child: Icon(Icons.add, size: 32, color: Colors.white),
+        child: Icon(Icons.add, size: 32, color: Colors.white)
+            .animate(onPlay: (controller) => controller.repeat(reverse: true))
+            .scale(
+              begin: const Offset(.92, .92),
+              end: const Offset(1.06, 1.06),
+              duration: 1100.ms,
+              curve: Curves.easeInOut,
+            ),
       ),
     );
   }
@@ -160,7 +175,15 @@ class _HomeState extends State<Home> {
 
 class HomePage extends StatelessWidget {
   final String userName;
-  const HomePage({Key? key, required this.userName}) : super(key: key);
+  final double initialBudget;
+  final double remainingBudget;
+
+  const HomePage({
+    Key? key,
+    required this.userName,
+    this.initialBudget = 50.0,
+    this.remainingBudget = 14.50,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +192,6 @@ class HomePage extends StatelessWidget {
         children: [
           _buildHeader(context),
           _buildBalanceCard(context),
-          _buildQuickActions(context),
           _buildRecentTransactions(context),
         ],
       ),
@@ -177,10 +199,14 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final topInset = MediaQuery.paddingOf(context).top;
+    final headerColor = _budgetStatusColor(remainingBudget, initialBudget);
+    final formattedBudget = remainingBudget.toStringAsFixed(2);
+
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.fromLTRB(20, topInset + 24, 20, 20),
       decoration: BoxDecoration(
-        color: NormalTheme.primaryGreen,
+        color: headerColor,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
@@ -193,7 +219,7 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Hola ${userName}',
+                'Hola $userName',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -245,9 +271,9 @@ class HomePage extends StatelessWidget {
             'Presupuesto Actual',
             style: TextStyle(color: Colors.white70, fontSize: 16),
           ),
-          const Text(
-            'S/14.50',
-            style: TextStyle(
+          Text(
+            'S/$formattedBudget',
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 42,
               fontWeight: FontWeight.bold,
@@ -260,12 +286,12 @@ class HomePage extends StatelessWidget {
 
   Widget _buildBalanceCard(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 22, 16, 20),
       child: Card(
         elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 28),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -303,20 +329,20 @@ class HomePage extends StatelessWidget {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: color, size: 24),
+          child: Icon(icon, color: color, size: 27),
         ),
-        const SizedBox(height: 8),
-        Text(title, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+        const SizedBox(height: 10),
+        Text(title, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
         Text(
           amount,
           style: TextStyle(
             color: color,
-            fontSize: 16,
+            fontSize: 17,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -324,43 +350,11 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActions(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildActionButton(context, 'Enviar', Icons.send),
-          _buildActionButton(context, 'Recibir', Icons.call_received),
-          _buildActionButton(context, 'Pagar', Icons.payment),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton(BuildContext context, String label, IconData icon) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.white : Colors.grey[100],
-            shape: BoxShape.circle,
-          ),
-          child: Icon(icon, color: Colors.green[600], size: 28),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: TextStyle(
-            color: theme.textTheme.bodyMedium?.color,
-            fontSize: 14,
-          ),
-        ),
-      ],
-    );
+  Color _budgetStatusColor(double remaining, double total) {
+    final ratio = total == 0 ? 0.0 : (remaining / total).clamp(0.0, 1.0);
+    if (ratio <= .20) return NormalTheme.danger;
+    if (ratio < .50) return NormalTheme.gold;
+    return NormalTheme.primaryGreen;
   }
 
   Widget _buildRecentTransactions(BuildContext context) {
